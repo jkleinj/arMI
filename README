@@ -1,0 +1,71 @@
+
+arMI: analytical residual Mutual Information 
+--------------------------------------------
+Computation of
+- Mutual Information (MI)
+- analytical residual Mutual Information (arMI)
+- numerical residual Mututal Information (nrMI)
+of all pairwise data vectors from a sequence alignment.
+The program accepts FASTA alignments as input (--mali),
+alternatively a random alignment (--random)
+of specified depth (--nseq) and length (--lseq)
+is created internally .
+
+All sequences must be of the same length, gap symbols '.' can be included.
+The default base set of 27 symbols is represented by ASCII values [64,90]
+or synonymously symbols [@,Z], where '@' is the program-internal gap symbol.
+
+The number of sequences must be in the range [2,1755],
+deeper alignments will lead to an assertion exception.
+
+
+Install / Uninstall
+-------------------
+Please read the general 'INSTALL' instructions.
+Otherwise use the following commands:
+tar -zxvf arMI-1.1.0.tgz; cd arMI-1.1.0
+./configure; make; make check; make install
+
+
+Usage
+-----
+armi [--mali ... || --random ] [OPTIONS ...]
+	INPUT SEQUENCE
+	   --mali <input alignment>	(mode: optional, type: char  , default: void)
+	   --nsubset <number of seqs.>	(mode: optional, type: int   , default: 0)
+	RANDOM SEQUENCE
+	   --random 			(mode: optional, type: no_arg, default: off)
+	   --nseq <number of seqs.>	(mode: optional, type: int   , default: 8)
+	   --lseq <length of seqs.>	(mode: optional, type: int   , default: 16)
+	OUTPUT
+	   --prefix <output prefix>	(mode: optional, type: char  , default: void)
+	HELP
+	   --cite			(mode: optional, type: no_arg, default: off)
+	   --version			(mode: optional, type: no_arg, default: off)
+	   --help
+
+
+-------------------------------------------------------------------------------
+Copyright (C) 2015 Jens Kleinjung
+Copyright (C) 2015 Ton Coolen
+
+Availability
+------------
+The program is made available under the GNU Public License for academic
+scientific purposes, under the condition that proper acknowledgement
+is made to the authors of the program in publications resulting from the use
+of the program.
+
+License
+-------
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+

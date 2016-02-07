@@ -1,0 +1,59 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ARG_H	arg.h	8;"	d
+ARMI_H	armi.h	8;"	d
+Arg	arg.h	/^} Arg;$/;"	t	typeref:struct:__anon2
+BINCOCACHE	bincocache.h	1;"	d
+BINCO_H	binco.h	8;"	d
+GETSEQS_H	getseqs.h	9;"	d
+MATRIX_H	matrix.h	8;"	d
+Nmax	armi.c	/^const unsigned int Nmax = 10000;$/;"	v
+Nmin	armi.c	/^const unsigned int Nmin = 1;$/;"	v
+SAFE_H	safe.h	8;"	d
+SEQ_H	seq.h	8;"	d
+Seq	seq.h	/^} Seq;$/;"	t	typeref:struct:__anon1
+alloc_mat3D_double	matrix.c	/^double ***alloc_mat3D_double(double ***mat3D_double, int x, int y, int z)$/;"	f
+alloc_mat3D_longdouble	matrix.c	/^long double ***alloc_mat3D_longdouble(long double ***mat3D_longdouble, int x, int y, int z)$/;"	f
+check_input	arg.c	/^static void check_input(Arg *arg)$/;"	f	file:
+check_non_null	safe.c	/^void *check_non_null(void *ptr)$/;"	f
+columnpair_mutual_information	armi.c	/^__inline__ static void columnpair_mutual_information(gsl_matrix *mali_, unsigned int N,$/;"	f	file:
+compute_binco	binco.c	/^static void compute_binco(gsl_matrix *binco)$/;"	f	file:
+factorial	binco.c	/^__inline__ static long double factorial(unsigned int n)$/;"	f	file:
+free_mat3D_double	matrix.c	/^void free_mat3D_double(double ***mat3D_double, int x, int y)$/;"	f
+free_mat3D_longdouble	matrix.c	/^void free_mat3D_longdouble(long double ***mat3D_longdouble, int x, int y)$/;"	f
+get_binco	binco.c	/^void get_binco(gsl_matrix *binco)$/;"	f
+get_rand_int	armi.c	/^__inline__ static int get_rand_int(unsigned int min, unsigned int max)$/;"	f	file:
+inFile	arg.h	/^    FILE *inFile;$/;"	m	struct:__anon2
+inFileName	arg.h	/^	char *inFileName;$/;"	m	struct:__anon2
+init_mat3D_double	matrix.c	/^void init_mat3D_double(double ***mat3D_double, int x, int y, int z, double val)$/;"	f
+init_mat3D_longdouble	matrix.c	/^void init_mat3D_longdouble(long double ***mat3D_longdouble, int x, int y, int z, long double val)$/;"	f
+lSeq	arg.h	/^	int lSeq; \/* length of alignment *\/$/;"	m	struct:__anon2
+length	seq.h	/^    int length; \/* length of sequence *\/$/;"	m	struct:__anon1
+main	armi.c	/^int main(int argc, char *argv[])$/;"	f
+nEle	arg.h	/^	int nEle; \/* number of alphabet elements *\/$/;"	m	struct:__anon2
+nSeq	arg.h	/^	int nSeq; \/* number of sequences *\/$/;"	m	struct:__anon2
+nSubset	arg.h	/^	int nSubset; \/* number of sequences in subset *\/$/;"	m	struct:__anon2
+name	seq.h	/^    char *name; \/* sequence name *\/$/;"	m	struct:__anon1
+parse_args	arg.c	/^int parse_args(int argc, char **argv, Arg *arg)$/;"	f
+prefix	arg.h	/^	char *prefix; \/* output prefix *\/$/;"	m	struct:__anon2
+print_args	arg.c	/^static void print_args(Arg *arg)$/;"	f	file:
+print_citation	arg.c	/^static void print_citation()$/;"	f	file:
+print_header	arg.c	/^static void print_header()$/;"	f	file:
+print_license	arg.c	/^static void print_license()$/;"	f	file:
+print_version	arg.c	/^static void print_version()$/;"	f	file:
+random	arg.h	/^	int random;$/;"	m	struct:__anon2
+randomise_matrix	armi.c	/^__inline__ static double randomise_matrix(gsl_matrix *mali_rand, gsl_matrix *mali, unsigned int N, unsigned int L)$/;"	f	file:
+read_sequence	getseqs.c	/^int read_sequence(FILE *file, Seq *sequence)$/;"	f
+read_sequence_name	getseqs.c	/^static int read_sequence_name(FILE *file, Seq *sequence)$/;"	f	file:
+read_sequence_residues	getseqs.c	/^static void read_sequence_residues(FILE *file, Seq *sequence)$/;"	f	file:
+residual_mutual_information	armi.c	/^__inline__ static void residual_mutual_information(gsl_matrix *MI_mat_, unsigned int N,$/;"	f	file:
+residual_mutual_information_si	armi.c	/^__inline__ static void residual_mutual_information_si(gsl_matrix *MI_mat_, unsigned int N,$/;"	f	file:
+residue	seq.h	/^    char *residue; \/* array of residues = sequence *\/$/;"	m	struct:__anon1
+safe_malloc	safe.c	/^void *safe_malloc(size_t size)$/;"	f
+safe_open	safe.c	/^FILE *safe_open(const char *name, const char *mode)$/;"	f
+safe_realloc	safe.c	/^void *safe_realloc(void *ptr, size_t size)$/;"	f
+set_defaults	arg.c	/^static void set_defaults(Arg *arg)$/;"	f	file:
