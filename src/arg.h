@@ -30,6 +30,7 @@ typedef struct
 	int nsubset; /* number of sequences in subset */
 	int nele; /* number of alphabet elements */
 	char *prefix; /* output prefix */
+	int silent; /* no stdout */
 } Arg;
 
 /*____________________________________________________________________________*/

@@ -47,7 +47,7 @@ __inline__ static long double factorial(unsigned int n)
 /* rMIxy */
 /*____________________________________________________________________________*/
 __inline__ static void armi(gsl_matrix *MI_mat_, unsigned int N,
-						unsigned int L,	gsl_matrix *p_E_, unsigned int E, FILE *outFile_)
+						unsigned int L,	gsl_matrix *p_E_, unsigned int E, FILE *outFile_,Arg *arg)
 {
 	unsigned int e, ex, ey, n, x, y, z, zz;
 
@@ -117,7 +117,7 @@ __inline__ static void armi(gsl_matrix *MI_mat_, unsigned int N,
 
 	/* from here onwards, column pairs determine p_x and p_y */
 	/* for all first columns x */
-	fprintf(stdout, "\tcompletion\tcol1\tcol2\n");
+	if (! arg->silent) fprintf(stdout, "\tcompletion\tcol1\tcol2\n");
 	for (x = 0, zz = 0; x < L - 1; ++ x) {
 		/* ... and all second columns y */
 		for (y = x + 1; y < L; ++ y) {
@@ -126,7 +126,8 @@ __inline__ static void armi(gsl_matrix *MI_mat_, unsigned int N,
 			completion = (long double)zz / ((long double)(L*(L-1)) / 2) * 100;
 			if ((int)completion > completion_i) {
 				completion_i = (int)completion;
-				fprintf(stdout, "\t%3d%%\t\t%d/%d\t%d/%d\r", completion_i, x, L-2, y, L-1);
+				if (! arg->silent) fprintf(stdout, "\t%3d%%\t\t%d/%d\t%d/%d\r",
+					completion_i, x, L-2, y, L-1);
 				fflush(stdout);
 			}
 
@@ -337,7 +338,7 @@ int main(int argc, char *argv[])
 	/* input alignment: random or from file */
 	/* if no input alignment, create random alignment */
 	if (arg.random) {
-		fprintf(stdout, "\nCreating random sequence alignment\n");
+		if (! arg.silent) fprintf(stdout, "\nCreating random sequence alignment\n");
 
 		N = arg.nseq; /* number of sequences */
 		L = arg.lseq; /* length of sequences */
@@ -362,7 +363,7 @@ int main(int argc, char *argv[])
 		fclose(outFile_seq);
 	/* ... or read alignment from file */
 	} else if (arg.infilename) {
-		fprintf(stdout, "\nReading alignment\n");
+		if (! arg.silent) fprintf(stdout, "\nReading alignment\n");
 
 		/* read specified alignment*/
 		sequence = (Seq *)safe_malloc(allocated * sizeof(Seq));
@@ -383,7 +384,7 @@ int main(int argc, char *argv[])
 		L = strlen(sequence[0].residue);
 	}
 
-	fprintf(stdout, "\tnumber of sequences: %d\n"
+	if (! arg.silent) fprintf(stdout, "\tnumber of sequences: %d\n"
 					"\tsequence length: %d\n", N, L);
 
 	/*____________________________________________________________________________*/
@@ -430,7 +431,7 @@ int main(int argc, char *argv[])
 
 	/*____________________________________________________________________________*/
 	/* analytical residual MI > 'arMI.dat' */
-	fprintf(stdout, "\nComputing arMI\n");
+	if (! arg.silent) fprintf(stdout, "\nComputing arMI\n");
 
 	gsl_matrix *MI_mat = gsl_matrix_calloc(L, L); /* MI matrix */
 	const unsigned int nPairs = L * (L - 1) / 2;
@@ -440,15 +441,15 @@ int main(int argc, char *argv[])
 	outFile_arMI = fopen(outFileName_arMI, "w");
 	fprintf(outFile_arMI, "col1\tcol2\tarMI\n");
 	begin = clock();
-	armi(MI_mat, N, L, p_E, E, outFile_arMI);
+	armi(MI_mat, N, L, p_E, E, outFile_arMI, &arg);
 	end = clock();
 	time_spent_arMI = (double)(end - begin) / CLOCKS_PER_SEC;
-	fprintf(stdout, "\n\tt(arMI): %lf s\n", time_spent_arMI);
+	if (! arg.silent) fprintf(stdout, "\n\tt(arMI): %lf s\n", time_spent_arMI);
 	fclose(outFile_arMI);
 
 	/*____________________________________________________________________________*/
 	/* MI > 'MI.dat': */
-	fprintf(stdout, "\nComputing MI\n");
+	if (! arg.silent) fprintf(stdout, "\nComputing MI\n");
 
 	gsl_vector *cMIvec = gsl_vector_calloc(nPairs);
 
@@ -459,15 +460,15 @@ int main(int argc, char *argv[])
 	columnpair_mutual_information(mali, N, L, p_E, E, Ngap, outFile_MI, cMIvec);
 	end = clock();
 	time_spent_MI = (double)(end - begin) / CLOCKS_PER_SEC;
-	fprintf(stdout, "\tt(MI): %lf s\n", time_spent_MI);
+	if (! arg.silent) fprintf(stderr, "\n\tt(MI): %lf s\n", time_spent_MI);
 	fclose(outFile_MI);
 
 	/*____________________________________________________________________________*/
 	/* numerical residual MI > 'nrMI.dat': */
 	/* create shuffled 100-fold randomised alignment matrix */
 	/*   and compute randomised column-wise element probability matrix p_E_rand */
-	fprintf(stdout, "\nComputing nrMI\n");
-	fprintf(stdout, "\trandomising input alignment %d times\n", nIter);
+	if (! arg.silent) fprintf(stdout, "\nComputing nrMI\n");
+	if (! arg.silent) fprintf(stdout, "\trandomising input alignment %d times\n", nIter);
 
 	/* randomised mali matrix */
 	gsl_matrix *mali_rand = gsl_matrix_calloc(N, L);
@@ -487,20 +488,21 @@ int main(int argc, char *argv[])
 
 	begin = clock();
 
-	fprintf(stdout, "\tcompletion\titer\n");
+	if (! arg.silent) fprintf(stdout, "\tcompletion\titer\n");
 	for (i = 0, zz = 0; i < nIter; ++ i) {
 		/* print progress */
 		++ zz;
-		completion = (long double)zz / ((long double)nIter) * 100;
-		if ((int)completion > completion_i) {
-			completion_i = (int)completion;
-			fprintf(stdout, "\t%3d%%\t\t%d/%d\r", completion_i, zz, nIter);
-			fflush(stdout);
-		}
+		//completion = (long double)zz / ((long double)nIter) * 100;
+		//if ((int)completion > completion_i) {
+		//	completion_i = (int)completion;
+		//	if (! arg.silent) fprintf(stdout, "\t%3d%%\t\t%d/%d\r",
+		//		completion_i, zz, nIter);
+		//	if (! arg.silent) fflush(stdout);
+		//}
 
-		sprintf(nrMIit, "%s%s%d%s", arg.prefix, "nrMI_data/nrMI.", i, ".dat");
-		outFile_nrMIit = fopen(nrMIit, "w");
-		fprintf(outFile_nrMIit, "col1\tcol2\tnrMI\n");
+		//sprintf(nrMIit, "%s%s%d%s", arg.prefix, "nrMI_data/nrMI.", i, ".dat");
+		//outFile_nrMIit = fopen(nrMIit, "w");
+		//fprintf(outFile_nrMIit, "col1\tcol2\tnrMI\n");
 
 		if (i == 0) {
 			randomise_matrix(mali_rand, mali, N, L);
@@ -526,45 +528,45 @@ int main(int argc, char *argv[])
 
 		columnpair_mutual_information(mali_rand, N, L, p_E_rand, E, Ngap, outFile_nrMIit, nrMIvec);
 		/* sum(MI) of each column pair over iterations */
-		gsl_vector_add(nrMImeanVec, nrMIvec);
+		//gsl_vector_add(nrMImeanVec, nrMIvec);
 		/* sum(MI^2) of each column pair over iterations */
-		gsl_vector_mul(nrMIvec, nrMIvec);
-		gsl_vector_add(nrMIvarVec, nrMIvec);
+		//gsl_vector_mul(nrMIvec, nrMIvec);
+		//gsl_vector_add(nrMIvarVec, nrMIvec);
 
-		fclose(outFile_nrMIit);
+		//fclose(outFile_nrMIit);
 	}
 
 	/* normalise to mean values */
-	gsl_blas_dscal((1 / (double)nIter), nrMImeanVec); /* E/N */
-	gsl_blas_dscal((1 / (double)nIter), nrMIvarVec); /* E^2/N */
+	//gsl_blas_dscal((1 / (double)nIter), nrMImeanVec); /* E/N */
+	//gsl_blas_dscal((1 / (double)nIter), nrMIvarVec); /* E^2/N */
 
 	/* compute E^2/N - (E/N)^2 */
-	gsl_vector_memcpy(nrMImeanVecCp, nrMImeanVec);
-	gsl_vector_mul(nrMImeanVecCp, nrMImeanVecCp);
-	gsl_vector_sub(nrMIvarVec, nrMImeanVecCp);
+	//gsl_vector_memcpy(nrMImeanVecCp, nrMImeanVec);
+	//gsl_vector_mul(nrMImeanVecCp, nrMImeanVecCp);
+	//gsl_vector_sub(nrMIvarVec, nrMImeanVecCp);
 
 	/* write vectors */
-	sprintf(outFileName_nrMI, "%s%s", arg.prefix, "nrMI.dat");
-	outFile_nrMI = fopen(outFileName_nrMI, "w");
-	fprintf(outFile_nrMI, "col1\tcol2\tmean(nrMI)\tsd(nrMI)\n");
-	for (x = 0, nMI = 0; x < L - 1; ++ x) {
-		for (y = x + 1; y < L; ++ y) {
-			fprintf(outFile_nrMI, "%d\t%d\t%lf\t%lg\n", x+1, y+1,
-						gsl_vector_get(nrMImeanVec, nMI),
-						sqrt(gsl_vector_get(nrMIvarVec, nMI)));	
-			++ nMI;
-		}
-	}
+	//sprintf(outFileName_nrMI, "%s%s", arg.prefix, "nrMI.dat");
+	//outFile_nrMI = fopen(outFileName_nrMI, "w");
+	//fprintf(outFile_nrMI, "col1\tcol2\tmean(nrMI)\tsd(nrMI)\n");
+	//for (x = 0, nMI = 0; x < L - 1; ++ x) {
+	//	for (y = x + 1; y < L; ++ y) {
+	//		fprintf(outFile_nrMI, "%d\t%d\t%lf\t%lg\n", x+1, y+1,
+	//					gsl_vector_get(nrMImeanVec, nMI),
+	//					sqrt(gsl_vector_get(nrMIvarVec, nMI)));	
+	//		++ nMI;
+	//	}
+	//}
 	end = clock();
 	time_spent_nrMI = (double)(end - begin) / CLOCKS_PER_SEC;
-	fprintf(stdout, "\n\tt(nrMI): %lf s\n", time_spent_nrMI);
+	if (! arg.silent) fprintf(stdout, "\n\tt(nrMI): %lf s\n", time_spent_nrMI);
 	fclose(outFile_nrMI);
 
 	/*____________________________________________________________________________*/
 	/* write times spent */
 	sprintf(outFileName_time , "%s%s", arg.prefix, "time.dat");
 	outFile_time = fopen(outFileName_time, "w");
-	fprintf(outFile_time, "%d\t%lf\t%lf\n", arg.nsubset, time_spent_arMI, time_spent_nrMI);
+	fprintf(outFile_time, "%d\t%lf\t%lf\n", arg.nseq, time_spent_arMI, time_spent_nrMI);
 	fclose(outFile_time);
 
 	/*____________________________________________________________________________*/
@@ -604,7 +606,7 @@ int main(int argc, char *argv[])
 
 	/*____________________________________________________________________________*/
 	/* termination*/
-	fprintf(stdout, "\nSuccessful program termination\n\n");
+	if (! arg.silent) fprintf(stdout, "\nSuccessful program termination\n\n");
 	return 0;
 }
 
