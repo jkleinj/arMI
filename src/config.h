@@ -88,7 +88,7 @@
 #define PACKAGE_VERSION "1.1.0"
 
 /* Define to compile with PROFILING settings. */
-/* #undef PROFILING */
+#define PROFILING 1
 
 /* Define to compile with SPEED settings. */
 /* #undef SPEED */

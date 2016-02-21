@@ -9,23 +9,23 @@ Read the COPYING file for license information.
 
 /*____________________________________________________________________________*/
 /** print version */
-static void print_version()
+static void print_version(Arg *arg)
 {
-	fprintf(stdout, "\nversion %s\n", VERSION);
+	if (! arg->silent) fprintf(stdout, "\nversion %s\n", VERSION);
 }
 
 /*____________________________________________________________________________*/
 /** print header */
-static void print_header()
+static void print_header(Arg *arg)
 {
-    fprintf(stdout, "\narMI: analytical residual MI between pairs of alignment columns\n");
+    if (! arg->silent) fprintf(stdout, "\narMI: analytical residual MI between pairs of alignment columns\n");
 }
 
 /*____________________________________________________________________________*/
 /** print license */
-static void print_license()
+static void print_license(Arg *arg)
 {
-    fprintf(stdout, "\nCopyright (C) 2015 Jens Kleinjung and Ton Coolen\n"
+    if (! arg->silent) fprintf(stdout, "\nCopyright (C) 2015 Jens Kleinjung and Ton Coolen\n"
 			"This program is free software and comes with ABSOLUTELY NO WARRANTY.\n"
 			"You are welcome to redistribute it under certain conditions.\n"
 			"Read the COPYING file for distribution details.\n\n");
@@ -33,9 +33,9 @@ static void print_license()
 
 /*____________________________________________________________________________*/
 /** print citation */
-static void print_citation()
+static void print_citation(Arg *arg)
 {
-	fprintf(stdout, "\nunpublished\n\n");
+	if (! arg->silent) fprintf(stdout, "\nunpublished\n\n");
 }
 
 /*____________________________________________________________________________*/
@@ -49,6 +49,7 @@ static void set_defaults(Arg *arg)
 	arg->random = 0; /* create random alignment */
 	arg->nsubset = 0; /* number of sequences in subset */
 	arg->prefix = ""; /* output prefix */
+	arg->silent = 0; /* stdout */
 }
 
 /*____________________________________________________________________________*/
@@ -69,8 +70,8 @@ static void print_args(Arg *arg)
     time_t now;
     time(&now);
 
-    fprintf(stdout, "\ndate: %s", ctime(&now));
-    fprintf(stdout, \
+    if (! arg->silent) fprintf(stdout, "\ndate: %s", ctime(&now));
+    if (! arg->silent) fprintf(stdout, \
                     "input file: %s\n"
                     "random: %d\n"
 					"number of sequences in subset: %d\n"
@@ -81,13 +82,13 @@ static void print_args(Arg *arg)
         arg->infilename, arg->random,
 		arg->nsubset, arg->prefix, arg->nele,
 		GSL_SF_FACT_NMAX, LDBL_MAX);
-	if (arg->random) {
+	if (! arg->silent) if (arg->random) {
 		fprintf(stdout, "number of random sequences: %d\n"
 						"length of random sequences: %d\n"
 						"input alignment stored in: %sin.fasta\n",
 		arg->nseq, arg->lseq, arg->prefix);
 	}
-    fflush(stdout);
+    if (! arg->silent) fflush(stdout);
 }
 
 /*____________________________________________________________________________*/
@@ -105,6 +106,7 @@ int parse_args(int argc, char **argv, Arg *arg)
 	   --lseq <length of seqs.>\t(mode: optional, type: int   , default: 16)\n\
 	OUTPUT\n\
 	   --prefix <output prefix>\t(mode: optional, type: char  , default: void)\n\
+		-- silent\n\
 	HELP\n\
 	   --cite\t\t\t(mode: optional, type: no_arg, default: off)\n\
 	   --version\t\t\t(mode: optional, type: no_arg, default: off)\n\
@@ -113,9 +115,9 @@ int parse_args(int argc, char **argv, Arg *arg)
     set_defaults(arg);
 
     if (argc < 2) {
-		print_header();
+		print_header(arg);
         fprintf(stderr, "%s", usage);
-		print_license();
+		print_license(arg);
         exit(1);
     }
 
@@ -128,6 +130,7 @@ int parse_args(int argc, char **argv, Arg *arg)
         {"nsubset", required_argument, 0, 5},
         {"prefix", required_argument, 0, 6},
         {"nele", required_argument, 0, 7},
+        {"silent", no_argument, 0, 19},
         {"cite", no_argument, 0, 20},
         {"version", no_argument, 0, 21},
         {"help", no_argument, 0, 22},
@@ -135,7 +138,7 @@ int parse_args(int argc, char **argv, Arg *arg)
     };
 
     /** assign parameters to long options */
-    while ((c = getopt_long(argc, argv, "1:2:3:4:5:6:7:20 21 22", long_options, NULL)) != -1) {
+    while ((c = getopt_long(argc, argv, "1:2:3:4:5:6:7:19 20 21 22", long_options, NULL)) != -1) {
         switch(c) {
             case 1:
                 arg->infilename = optarg;
@@ -158,26 +161,29 @@ int parse_args(int argc, char **argv, Arg *arg)
             case 7:
                 arg->nele = atoi(optarg);
                 break;
+            case 19:
+                arg->silent = 1;
+                break;
             case 20:
-                print_citation();
+                print_citation(arg);
                 exit(0);
             case 21:
-				print_version();
-				print_license();
+				print_version(arg);
+				print_license(arg);
                 exit(0);
             case 22:
                 fprintf(stderr, "%s", usage);
-				print_license();
+				print_license(arg);
                 exit(0);
             default:
                 fprintf(stderr, "%s", usage);
-				print_license();
+				print_license(arg);
                 exit(1);
         }
     }
 
 	check_input(arg);
-    print_header();
+    print_header(arg);
     print_args(arg);
 
     return 0;
