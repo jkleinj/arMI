@@ -15,7 +15,7 @@ int get_rownames(FILE *rowfile, Expr *expr)
 
 	expr->rowname = safe_malloc(allocated * sizeof(char));
 
-	while(fgets(line, 1048575, rownamesInFile) != 0) {
+	while(fgets(line, 1048575, rowfile) != 0) {
 		while (sscanf(&(line[0]), "%s", expr->rowname[i]) == 1) {
 			++ i;
 
@@ -38,7 +38,7 @@ int get_colnames(FILE *colfile, Expr *expr)
 
 	expr->colname = safe_malloc(allocated * sizeof(char *));
 
-	while(fgets(line, 1048575, colnamesInFile) != 0) {
+	while(fgets(line, 1048575, colfile) != 0) {
 		while (sscanf(&(line[0]), "%s", expr->colname[i]) == 1) {
 			++ i;
 
@@ -61,11 +61,11 @@ int read_expression(FILE *exprfile, Expr *expr)
 
 	expr->read = alloc_mat2D_float(expr->read, expr->nrow, expr->ncol);
 
-	while(fgets(line, 4096, exprInFile) != 0) {	
+	while (fgets(line, 4096, exprfile) != 0) {	
 		while (sscanf(&(line[0]), "%f", &(expr->read[i][j])) == 1) {
 			++ i;
 		}
-		assert((i == expr->ncol) && "Expecting columns to match col file";
+		assert((i == expr->ncol) && "Expecting columns to match col file");
 		i = 0;
 		++ j;
 	}

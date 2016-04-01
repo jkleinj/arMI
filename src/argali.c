@@ -18,7 +18,7 @@ static void print_version()
 /** print header */
 static void print_header()
 {
-    fprintf(stdout, "\narMI: analytical residual MI between pairs of alignment columns\n");
+    fprintf(stdout, "\narmiali: analytical residual MI between pairs of alignment columns\n");
 }
 
 /*____________________________________________________________________________*/

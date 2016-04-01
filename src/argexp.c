@@ -18,7 +18,7 @@ static void print_version()
 /** print header */
 static void print_header()
 {
-    fprintf(stdout, "\narMI: analytical residual MI between pairs of alignment columns\n");
+    fprintf(stdout, "\narmiexp: analytical residual MI between pairs of gene expression samples\n");
 }
 
 /*____________________________________________________________________________*/
@@ -53,9 +53,9 @@ static void set_defaults(Arg *arg)
 /** check input */
 static void check_input(Arg *arg)
 {
-	assert(((strlen(arg->exprfilename) > 0) && "Need an expression file");
-	assert(((strlen(arg->rowfilename) > 0) && "Need a row name file");
-	assert(((strlen(arg->colfilename) > 0) && "Need a column name file");
+	assert((strlen(arg->exprfilename) > 0) && "Need an expression file");
+	assert((strlen(arg->rowfilename) > 0) && "Need a row name file");
+	assert((strlen(arg->colfilename) > 0) && "Need a column name file");
 	assert(arg->nsubset >= 0 && "Number of genes in subset must be >0");
 }
 
@@ -71,11 +71,12 @@ static void print_args(Arg *arg)
                     "expression file: %s\n"
                     "row name file: %s\n"
                     "column name file: %s\n"
+                    "nsubset: %d\n"
                     "prefix: %s\n"
                     "GSL factorial maximum: %d\n"
                     "long double maximum: %Le\n",
-        arg->exprfilename, arg->rowfile,
-		arg->colfile, arg->nsubset, arg->prefix,
+        arg->exprfilename, arg->rowfilename, arg->colfilename,
+		arg->nsubset, arg->prefix,
 		GSL_SF_FACT_NMAX, LDBL_MAX);
     fflush(stdout);
 }
@@ -90,7 +91,7 @@ int parse_args(int argc, char **argv, Arg *arg)
 	   --expr <expression values>\t(mode: mandatory, type: char  , default: void)\n\
 	   --row <column names>\t(mode: mandatory, type: char  , default: void)\n\
 	   --col <row names>\t(mode: mandatory, type: char  , default: void)\n\
-	   --nsubset <number of seqs.>\t(mode: optional, type: int   , default: 0)\n\
+	   --nsubset <number of genes>\t(mode: optional, type: int   , default: 0)\n\
 	OUTPUT\n\
 	   --prefix <output prefix>\t(mode: optional, type: char  , default: void)\n\
 	HELP\n\
