@@ -1,11 +1,11 @@
 /*===============================================================================
-seq.h : sequence data structure
+expr.h : expresion data structure
 Copyright (C) 2016 Jens Kleinjung
 Read the COPYING file for license information.
 ================================================================================*/
 
-#ifndef SEQ_H
-#define SEQ_H
+#ifndef EXPR_H
+#define EXPR_H
 
 /*___________________________________________________________________________*/
 /** data structures */
@@ -13,10 +13,12 @@ Read the COPYING file for license information.
 /* sequence */
 typedef struct  
 {
-    char *name; /* sequence name */
-    char *residue; /* array of residues = sequence */
-    int length; /* length of sequence */
-} Seq;
+	int nrow; /* number of rows */
+	int ncol; /* number of columns */
+	char (*rowname)[64];
+	char (*colname)[64];
+	float **read; /* expression values */
+} Expr; 
 
 #endif
 

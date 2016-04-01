@@ -80,7 +80,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = armi$(EXEEXT)
+bin_PROGRAMS = armiali$(EXEEXT) armiexp$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(srcdir)/config.h.in $(top_srcdir)/depcomp
@@ -95,10 +95,14 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_armi_OBJECTS = armi.$(OBJEXT) arg.$(OBJEXT) getseqs.$(OBJEXT) \
-	matrix.$(OBJEXT) safe.$(OBJEXT)
-armi_OBJECTS = $(am_armi_OBJECTS)
-armi_LDADD = $(LDADD)
+am_armiali_OBJECTS = armiali.$(OBJEXT) argali.$(OBJEXT) \
+	getseqs.$(OBJEXT) matrix.$(OBJEXT) safe.$(OBJEXT)
+armiali_OBJECTS = $(am_armiali_OBJECTS)
+armiali_LDADD = $(LDADD)
+am_armiexp_OBJECTS = armiexp.$(OBJEXT) argexp.$(OBJEXT) \
+	getexprs.$(OBJEXT) matrix.$(OBJEXT) safe.$(OBJEXT)
+armiexp_OBJECTS = $(am_armiexp_OBJECTS)
+armiexp_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -127,8 +131,8 @@ AM_V_CCLD = $(am__v_CCLD_$(V))
 am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(armi_SOURCES)
-DIST_SOURCES = $(armi_SOURCES)
+SOURCES = $(armiali_SOURCES) $(armiexp_SOURCES)
+DIST_SOURCES = $(armiali_SOURCES) $(armiexp_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -155,12 +159,12 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home2/jkleinj/arMI/missing aclocal-1.14
+ACLOCAL = ${SHELL} /home2/jkleinj/arMI/arMI/missing aclocal-1.14
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
-AUTOCONF = ${SHELL} /home2/jkleinj/arMI/missing autoconf
-AUTOHEADER = ${SHELL} /home2/jkleinj/arMI/missing autoheader
-AUTOMAKE = ${SHELL} /home2/jkleinj/arMI/missing automake-1.14
+AUTOCONF = ${SHELL} /home2/jkleinj/arMI/arMI/missing autoconf
+AUTOHEADER = ${SHELL} /home2/jkleinj/arMI/arMI/missing autoheader
+AUTOMAKE = ${SHELL} /home2/jkleinj/arMI/arMI/missing automake-1.14
 AWK = mawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
@@ -185,7 +189,7 @@ LDFLAGS =
 LIBOBJS = 
 LIBS = -lgsl -lgslcblas -lm 
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home2/jkleinj/arMI/missing makeinfo
+MAKEINFO = ${SHELL} /home2/jkleinj/arMI/arMI/missing makeinfo
 MKDIR_P = /bin/mkdir -p
 MPICC = 
 MPILIBS = 
@@ -202,10 +206,10 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = 
 VERSION = 1.1.0
-abs_builddir = /home2/jkleinj/arMI/src
-abs_srcdir = /home2/jkleinj/arMI/src
-abs_top_builddir = /home2/jkleinj/arMI
-abs_top_srcdir = /home2/jkleinj/arMI
+abs_builddir = /home2/jkleinj/arMI/arMI/src
+abs_srcdir = /home2/jkleinj/arMI/arMI/src
+abs_top_builddir = /home2/jkleinj/arMI/arMI
+abs_top_srcdir = /home2/jkleinj/arMI/arMI
 ac_ct_CC = gcc
 am__include = include
 am__leading_dot = .
@@ -224,7 +228,7 @@ host_alias =
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home2/jkleinj/arMI/install-sh
+install_sh = ${SHELL} /home2/jkleinj/arMI/arMI/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -245,9 +249,13 @@ top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
 AM_CFLAGS = -Wall
-armi_SOURCES = \
-armi.c armi.h arg.c arg.h getseqs.c getseqs.h matrix.h matrix.c safe.c safe.h \
-seq.h
+armiali_SOURCES = \
+armiali.c armiali.h argali.c argali.h getseqs.c getseqs.h \
+matrix.h matrix.c safe.c safe.h seq.h
+
+armiexp_SOURCES = \
+armiexp.c armiexp.h argexp.c argexp.h expr.h getexprs.c getexprs.h \
+matrix.h matrix.c safe.c safe.h
 
 CLEANFILES = $(TARGET) *.o 
 DISTCLEANFILES = libtool config.cache config.log
@@ -344,9 +352,13 @@ uninstall-binPROGRAMS:
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 
-armi$(EXEEXT): $(armi_OBJECTS) $(armi_DEPENDENCIES) $(EXTRA_armi_DEPENDENCIES) 
-	@rm -f armi$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(armi_OBJECTS) $(armi_LDADD) $(LIBS)
+armiali$(EXEEXT): $(armiali_OBJECTS) $(armiali_DEPENDENCIES) $(EXTRA_armiali_DEPENDENCIES) 
+	@rm -f armiali$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(armiali_OBJECTS) $(armiali_LDADD) $(LIBS)
+
+armiexp$(EXEEXT): $(armiexp_OBJECTS) $(armiexp_DEPENDENCIES) $(EXTRA_armiexp_DEPENDENCIES) 
+	@rm -f armiexp$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(armiexp_OBJECTS) $(armiexp_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -354,8 +366,11 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-include ./$(DEPDIR)/arg.Po
-include ./$(DEPDIR)/armi.Po
+include ./$(DEPDIR)/argali.Po
+include ./$(DEPDIR)/argexp.Po
+include ./$(DEPDIR)/armiali.Po
+include ./$(DEPDIR)/armiexp.Po
+include ./$(DEPDIR)/getexprs.Po
 include ./$(DEPDIR)/getseqs.Po
 include ./$(DEPDIR)/matrix.Po
 include ./$(DEPDIR)/safe.Po

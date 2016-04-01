@@ -11,12 +11,22 @@ alternatively a random alignment (--random)
 of specified depth (--nseq) and length (--lseq)
 is created internally .
 
+Alignments
+----------
 All sequences must be of the same length, gap symbols '.' can be included.
 The default base set of 27 symbols is represented by ASCII values [64,90]
 or synonymously symbols [@,Z], where '@' is the program-internal gap symbol.
 
 The number of sequences must be in the range [2,1755],
 deeper alignments will lead to an assertion exception.
+
+Expression values
+-----------------
+The row and column names are read in separately from the expression values.
+The names must not exceed 63 characters each.
+The number of row and column names determines the matrix size of the
+expression values and size mismatches lead to program termination.
+Expression values are cast into float types and grouped into log2 bins.
 
 
 Install / Uninstall

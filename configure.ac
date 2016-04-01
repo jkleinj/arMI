@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.59])
 AC_INIT(armi, 1.1.0, Jens.Kleinjung@crick.ac.uk)
-AC_CONFIG_SRCDIR([src/armi.c])
+AC_CONFIG_SRCDIR([src/armiali.c])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 
 # Checks for programs.
