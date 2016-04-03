@@ -111,7 +111,7 @@ int parse_args(int argc, char **argv, Arg *arg)
     /** long option definition */
     static struct option long_options[] = {
         {"expr", required_argument, 0, 1},
-        {"row", no_argument, 0, 2},
+        {"row", required_argument, 0, 2},
         {"col", required_argument, 0, 3},
         {"nsubset", required_argument, 0, 5},
         {"prefix", required_argument, 0, 6},

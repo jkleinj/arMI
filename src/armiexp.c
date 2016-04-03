@@ -345,7 +345,7 @@ int main(int argc, char *argv[])
 	/*____________________________________________________________________________*/
 	/* input column names */
 	if (arg.colfilename) {
-		fprintf(stdout, "\nReading col names\n");
+		fprintf(stdout, "\nReading column names\n");
 
 		arg.colfile = safe_open(arg.colfilename, "r");
 		L = get_colnames(arg.colfile, &expr);
@@ -355,19 +355,19 @@ int main(int argc, char *argv[])
 	}
 
 	/*____________________________________________________________________________*/
-	/* input expression values: random or from file */
-	/* if no input alignment, create random alignment */
+	/* input expression values */
 	if (arg.exprfilename) {
 		fprintf(stdout, "\nReading expression values\n");
 
 		/* read specified alignment*/
 		arg.exprfile = safe_open(arg.exprfilename, "r");
+		read_expression(arg.exprfile, &expr);
 		fclose(arg.exprfile);
+
+		fprintf(stdout, "\tnumber of expression values: %d\n", expr.ndat);
 	}
 
-	fprintf(stdout, "\tnumber of sequences: %d\n"
-					"\tsequence length: %d\n", N, L);
-
+	exit(1);
     /*____________________________________________________________________________*/
 	//E = max(log2()); /* number of expression levels */
 

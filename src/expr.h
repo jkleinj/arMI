@@ -18,6 +18,7 @@ typedef struct
 	char (*rowname)[64];
 	char (*colname)[64];
 	float **read; /* expression values */
+	int ndat; /* number of expression values */
 } Expr; 
 
 #endif

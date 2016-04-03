@@ -11,6 +11,7 @@ Read the COPYING file for license information.
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "expr.h"
 #include "safe.h"
