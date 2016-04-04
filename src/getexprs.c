@@ -67,7 +67,7 @@ int read_expression(FILE *exprfile, Expr *expr)
 	unsigned int nDat = 0;
 
 	expr->read = alloc_mat2D_float(expr->read, expr->nrow, expr->ncol);
-	expr->level = alloc_mat2D_float(expr->level, expr->nrow, expr->ncol);
+	expr->level = alloc_mat2D_int(expr->level, expr->nrow, expr->ncol);
 
 	while(! feof(exprfile)) {
         /* scan expression data */
