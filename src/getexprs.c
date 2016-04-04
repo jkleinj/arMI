@@ -60,14 +60,13 @@ int get_colnames(FILE *colfile, Expr *expr)
 }
 
 /*____________________________________________________________________________*/
-int read_expression(FILE *exprfile, Expr *expr)
+void read_expression(FILE *exprfile, Expr *expr)
 {
 	unsigned int row = 0;
 	unsigned int col = 0;
 	unsigned int nDat = 0;
 
 	expr->read = alloc_mat2D_float(expr->read, expr->nrow, expr->ncol);
-	expr->level = alloc_mat2D_int(expr->level, expr->nrow, expr->ncol);
 
 	while(! feof(exprfile)) {
         /* scan expression data */
@@ -95,7 +94,5 @@ int read_expression(FILE *exprfile, Expr *expr)
 	assert((nDat == (expr->nrow * expr->ncol)) && "Dimensions of value matrix and column/row names unequal");
 
 	expr->ndat = nDat;
-
-	return nDat;
 }
 

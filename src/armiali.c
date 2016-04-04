@@ -212,7 +212,7 @@ __inline__ static void columnpair_mutual_information(gsl_matrix *mali_, unsigned
 			/* reset p_EE for each column pair */
 			gsl_matrix_set_zero(p_EE);
 			/* compute pair weight */
-			w_ee = 1 / (((dN - dNgapx) / dN) * (dN - dNgapy) / dN * dN);
+			w_ee = 1 / sqrt((dN - dNgapx) * (dN - dNgapy));
 			/* compute p_EE for column pair x,y */
 			/* for n sequences */
 			for (n = 0; n < N; ++ n) {

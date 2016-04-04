@@ -189,9 +189,9 @@ __inline__ static void armi(gsl_matrix *MI_mat_, unsigned int N,
 /*____________________________________________________________________________*/
 /* MIxy */
 /*____________________________________________________________________________*/
-__inline__ static void columnpair_mutual_information(gsl_matrix *mali_, unsigned int N,
+__inline__ static void columnpair_mutual_information(gsl_matrix *level_, unsigned int N,
 						unsigned int L,	gsl_matrix *p_E_, unsigned int E,
-						unsigned int *Ngap, FILE *outFile_, gsl_vector *MIvec_)
+						FILE *outFile_, gsl_vector *MIvec_)
 {
 	unsigned int e_x, e_y, n, x, y;
 	double MIxy = 0.;
@@ -200,7 +200,6 @@ __inline__ static void columnpair_mutual_information(gsl_matrix *mali_, unsigned
 	gsl_matrix *p_EE = gsl_matrix_calloc(E, E);
 	double w_ee;
 	double dN = (double)N;
-	double dNgapx, dNgapy;
 
 	/* for all column pairs */
 	/* for first columns x */
@@ -214,11 +213,11 @@ __inline__ static void columnpair_mutual_information(gsl_matrix *mali_, unsigned
 			/* compute pair weight */
 			w_ee = 1 / (((dN - dNgapx) / dN) * (dN - dNgapy) / dN * dN);
 			/* compute p_EE for column pair x,y */
-			/* for n sequences */
+			/* for n rows */
 			for (n = 0; n < N; ++ n) {
 				/* get probability of alignment elements (characters) at positions [n,x] and [n,y] */
-				e_x = (int)gsl_matrix_get(mali_, n, x);
-				e_y = (int)gsl_matrix_get(mali_, n, y);
+				e_x = (int)gsl_matrix_get(level_, n, x);
+				e_y = (int)gsl_matrix_get(level_, n, y);
 				/* compute element pair probabilities */
 				gsl_matrix_set(p_EE, e_x, e_y, gsl_matrix_get(p_EE, e_x, e_y) + w_ee);
 			}

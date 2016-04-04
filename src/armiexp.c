@@ -212,7 +212,7 @@ __inline__ static void columnpair_mutual_information(gsl_matrix *mali_, unsigned
 			/* reset p_EE for each column pair */
 			gsl_matrix_set_zero(p_EE);
 			/* compute pair weight */
-			w_ee = 1 / (((dN - dNgapx) / dN) * (dN - dNgapy) / dN * dN);
+			w_ee = 1 / dN;
 			/* compute p_EE for column pair x,y */
 			/* for n sequences */
 			for (n = 0; n < N; ++ n) {
@@ -364,18 +364,24 @@ int main(int argc, char *argv[])
 		read_expression(arg.exprfile, &expr);
 		fclose(arg.exprfile);
 
-		fprintf(stdout, "\tnumber of expression values: %d\n", expr.ndat);
+		fprintf(stdout, "\tnumber of expression values: %d\n", expr.ndat);roundf(log2(expr.read[i][j]))log2(expr.read[i][j])
 	}
 
     /*____________________________________________________________________________*/
 	/* determine min/max expression values and number of expression levels */
 	/* create expression level matrix */
+	gsl_matrix *level = gsl_matrix_calloc(N, L); /* expression level matrix */
+
 	expr.min = FLT_MAX;
 	expr.max = FLT_MIN;
 	for (i = 0; i < expr.nrow; ++ i) {
 		for (j = 0; j < expr.ncol; ++ j) {
 			assert((expr.read[i][j] >= 0.) && "expression values should be positive");
-			expr.level[i][j] = (int)roundf(log2(expr.read[i][j]));
+			if (expr.read[i][j] > 0.) {
+				gsl_matrix_set(level, n, l, (double)roundf(log2(expr.read[i][j]));
+			} else {
+				gsl_matrix_set(level, n, l, (double)0.);
+			}
 			expr.min = fminf(expr.read[i][j], expr.min);
 			expr.max = fmax(expr.read[i][j], expr.max);
 		}
@@ -387,181 +393,185 @@ int main(int argc, char *argv[])
 
 	/*____________________________________________________________________________*/
 	/* compute column-wise element probability matrix p_E */
-	//gsl_matrix *p_E = gsl_matrix_calloc(E, L); /* probabilities of elements */
+	gsl_matrix *p_E = gsl_matrix_calloc(E + 1, L); /* probabilities of elements */
 
-	/* for the alignment length */
-	//for (l = 0; l < L; ++ l) {
-	//	/* for all sequences in column 'l':
-	//		probablities of alphabet elements in column 'l' */
-	//	for (n = 0; n < N; ++ n) {
-	//		/* set current element (0 - 26) */
-	//		e = (int)gsl_matrix_get(mali, n, l);
-	//		//assert(e <= E);
-	//		if ((e < 0)  || (e > E)) {
-	//			printf("Symbol %c (ASCII %d) out of range [@-Z]\n", e, e);
-	//			printf("ASCII %d '%c'\n", sequence[n].residue[l], sequence[n].residue[l]);
-	//			exit(1);
-	//		}
-	//		if (e > 0) {
-	//			gsl_matrix_set(p_E, e, l, (gsl_matrix_get(p_E, e, l) + (1 / (double)(N - Ngap[l]))));
-	//		}
-	//	}
-	//}
+	/* for all columns (samples) */
+	for (l = 0; l < L; ++ l) {
+		/* for all in column 'l':
+			probablities of expression levels in column 'l' */
+		for (n = 0; n < N; ++ n) {
+			/* set current element (0 - E) */
+			e = (int)gsl_matrix_get(level, n, l);
+#ifdef DEBUG
+			fprintf(stderr, "row %d, column %d, e %d\n", n, l, e);
+#endif
+			assert(e <= E);
+			if ((e < 0)  || (e > E)) {
+				printf("Symbol %c (ASCII %d) out of range [0-E]\n", e, e);
+				printf("expression level: row %d, column %d\n", n, l);
+				exit(1);
+			}
+			if (e > 0) {
+				gsl_matrix_set(p_E, e, l, (gsl_matrix_get(p_E, e, l) + (1 / (double)N)));
+			}
+		}
+	}
 
 	/*____________________________________________________________________________*/
 	/* analytical residual MI > 'arMI.dat' */
-	//fprintf(stdout, "\nComputing arMI\n");
+	fprintf(stdout, "\nComputing arMI\n");
 
-	//gsl_matrix *MI_mat = gsl_matrix_calloc(L, L); /* MI matrix */
-	//const unsigned int nPairs = L * (L - 1) / 2;
-	//gsl_vector *arMIvec = gsl_vector_calloc(nPairs); /* to compute rmsd below */
+	gsl_matrix *MI_mat = gsl_matrix_calloc(L, L); /* MI matrix */
+	const unsigned int nPairs = L * (L - 1) / 2;
+	gsl_vector *arMIvec = gsl_vector_calloc(nPairs); /* to compute rmsd below */
 
-	//sprintf(outFileName_arMI, "%s%s", arg.prefix, "arMI.dat");
-	//outFile_arMI = fopen(outFileName_arMI, "w");
-	//fprintf(outFile_arMI, "col1\tcol2\tarMI\n");
-	//begin = clock();
-	//armi(MI_mat, N, L, p_E, E, outFile_arMI);
-	//end = clock();
-	//time_spent_arMI = (double)(end - begin) / CLOCKS_PER_SEC;
-	//fprintf(stdout, "\n\tt(arMI): %lf s\n", time_spent_arMI);
-	//fclose(outFile_arMI);
-
+	sprintf(outFileName_arMI, "%s%s", arg.prefix, "arMI.dat");
+	outFile_arMI = fopen(outFileName_arMI, "w");
+	fprintf(outFile_arMI, "col1\tcol2\tarMI\n");
+	begin = clock();
+	armi(MI_mat, N, L, p_E, E, outFile_arMI);
+	end = clock();
+	time_spent_arMI = (double)(end - begin) / CLOCKS_PER_SEC;
+	fprintf(stdout, "\n\tt(arMI): %lf s\n", time_spent_arMI);
+	fclose(outFile_arMI);
+exit(1);
 	/*____________________________________________________________________________*/
 	/* MI > 'MI.dat': */
-	//fprintf(stdout, "\nComputing MI\n");
+	fprintf(stdout, "\nComputing MI\n");
 
-	//gsl_vector *cMIvec = gsl_vector_calloc(nPairs);
+	gsl_vector *cMIvec = gsl_vector_calloc(nPairs);
 
-	//sprintf(outFileName_MI, "%s%s", arg.prefix, "MI.dat");
-	//outFile_MI = fopen(outFileName_MI, "w");
-	//fprintf(outFile_MI, "col1\tcol2\tMI\n");
-	//begin = clock();
-	//columnpair_mutual_information(mali, N, L, p_E, E, Ngap, outFile_MI, cMIvec);
-	//end = clock();
-	//time_spent_MI = (double)(end - begin) / CLOCKS_PER_SEC;
-	//fprintf(stdout, "\tt(MI): %lf s\n", time_spent_MI);
-	//fclose(outFile_MI);
+	sprintf(outFileName_MI, "%s%s", arg.prefix, "MI.dat");
+	outFile_MI = fopen(outFileName_MI, "w");
+	fprintf(outFile_MI, "col1\tcol2\tMI\n");
+	begin = clock();
+	columnpair_mutual_information(level, N, L, p_E, E, outFile_MI, cMIvec);
+	end = clock();
+	time_spent_MI = (double)(end - begin) / CLOCKS_PER_SEC;
+	fprintf(stdout, "\tt(MI): %lf s\n", time_spent_MI);
+	fclose(outFile_MI);
 
 	/*____________________________________________________________________________*/
 	/* numerical residual MI > 'nrMI.dat': */
 	/* create shuffled 100-fold randomised alignment matrix */
 	/*   and compute randomised column-wise element probability matrix p_E_rand */
-	//fprintf(stdout, "\nComputing nrMI\n");
-	//fprintf(stdout, "\trandomising input alignment %d times\n", nIter);
+	fprintf(stdout, "\nComputing nrMI\n");
+	fprintf(stdout, "\trandomising input alignment %d times\n", nIter);
 
 	/* randomised mali matrix */
-	//gsl_matrix *mali_rand = gsl_matrix_calloc(N, L);
+	gsl_matrix *mali_rand = gsl_matrix_calloc(N, L);
 	/* probabilities of elements */
-	//gsl_matrix *p_E_rand = gsl_matrix_calloc(E, L);
+	gsl_matrix *p_E_rand = gsl_matrix_calloc(E, L);
 	/* nrMI values of repeated randomisation */
-	//gsl_vector *nrMIvec = gsl_vector_calloc(nPairs);
+	gsl_vector *nrMIvec = gsl_vector_calloc(nPairs);
 	/* nrMI mean values of repeated randomisation */
-	//gsl_vector *nrMImeanVec = gsl_vector_calloc(nPairs);
+	gsl_vector *nrMImeanVec = gsl_vector_calloc(nPairs);
 	/* copy of the previous */
-	//gsl_vector *nrMImeanVecCp = gsl_vector_calloc(nPairs);
+	gsl_vector *nrMImeanVecCp = gsl_vector_calloc(nPairs);
 	/* nrMI var values of repeated randomisation */
-	//gsl_vector *nrMIvarVec = gsl_vector_calloc(nPairs);
+	gsl_vector *nrMIvarVec = gsl_vector_calloc(nPairs);
 
-	//sprintf(outDirName, "%s%s", arg.prefix, "nrMI_data");
-	//mkdir(outDirName, 0777);
+	sprintf(outDirName, "%s%s", arg.prefix, "nrMI_data");
+	mkdir(outDirName, 0777);
 
-	//begin = clock();
+	begin = clock();
 
-	//fprintf(stdout, "\tcompletion\titer\n");
-	//for (i = 0, zz = 0; i < nIter; ++ i) {
+	fprintf(stdout, "\tcompletion\titer\n");
+	for (i = 0, zz = 0; i < nIter; ++ i) {
 		/* print progress */
-	//	++ zz;
-	//	completion = (long double)zz / ((long double)nIter) * 100;
-	//	if ((int)completion > completion_i) {
-	//		completion_i = (int)completion;
-	//		fprintf(stdout, "\t%3d%%\t\t%d/%d\r", completion_i, zz, nIter);
-	//		fflush(stdout);
-	//	}
+		++ zz;
+		completion = (long double)zz / ((long double)nIter) * 100;
+		if ((int)completion > completion_i) {
+			completion_i = (int)completion;
+			fprintf(stdout, "\t%3d%%\t\t%d/%d\r", completion_i, zz, nIter);
+			fflush(stdout);
+		}
 
-	//	sprintf(nrMIit, "%s%s%d%s", arg.prefix, "nrMI_data/nrMI.", i, ".dat");
-	//	outFile_nrMIit = fopen(nrMIit, "w");
-	//	fprintf(outFile_nrMIit, "col1\tcol2\tnrMI\n");
+		sprintf(nrMIit, "%s%s%d%s", arg.prefix, "nrMI_data/nrMI.", i, ".dat");
+		outFile_nrMIit = fopen(nrMIit, "w");
+		fprintf(outFile_nrMIit, "col1\tcol2\tnrMI\n");
 
-	//	if (i == 0) {
-	//		randomise_matrix(mali_rand, mali, N, L);
-	//	} else {
-	//		randomise_matrix(mali_rand, mali_rand, N, L);
-	//	}
-	//	gsl_matrix_set_zero(p_E_rand);
-	//	gsl_vector_set_zero(nrMIvec);
+		if (i == 0) {
+			randomise_matrix(mali_rand, mali, N, L);
+		} else {
+			randomise_matrix(mali_rand, mali_rand, N, L);
+		}
+		gsl_matrix_set_zero(p_E_rand);
+		gsl_vector_set_zero(nrMIvec);
 
 		/* for the alignment length */
-	//	for (l = 0; l < L; ++ l) {
+		for (l = 0; l < L; ++ l) {
 			/* for all sequences in column 'l':
 				probablities of alphabet elements in column 'l' */
-	//		for (n = 0; n < N; ++ n) {
+			for (n = 0; n < N; ++ n) {
 				/* set current element (0 - 25) */
-	//			e = (int)gsl_matrix_get(mali_rand, n, l);
-	//			if (e > 0) {
-	//				gsl_matrix_set(p_E_rand, e, l, (gsl_matrix_get(p_E_rand, e, l)
-	//											+ (1 / (double)(N - Ngap[l]))));
-	//			}
-	//		}
-	//	}
+				e = (int)gsl_matrix_get(mali_rand, n, l);
+				if (e > 0) {
+					gsl_matrix_set(p_E_rand, e, l, (gsl_matrix_get(p_E_rand, e, l)
+												+ (1 / (double)(N - Ngap[l]))));
+				}
+			}
+		}
 
-	//	columnpair_mutual_information(mali_rand, N, L, p_E_rand, E, Ngap, outFile_nrMIit, nrMIvec);
+		columnpair_mutual_information(mali_rand, N, L, p_E_rand, E, Ngap, outFile_nrMIit, nrMIvec);
 		/* sum(MI) of each column pair over iterations */
-	//	gsl_vector_add(nrMImeanVec, nrMIvec);
+		gsl_vector_add(nrMImeanVec, nrMIvec);
 		/* sum(MI^2) of each column pair over iterations */
-	//	gsl_vector_mul(nrMIvec, nrMIvec);
-	//	gsl_vector_add(nrMIvarVec, nrMIvec);
+		gsl_vector_mul(nrMIvec, nrMIvec);
+		gsl_vector_add(nrMIvarVec, nrMIvec);
 
-	//	fclose(outFile_nrMIit);
-	//}
+		fclose(outFile_nrMIit);
+	}
 
 	/* normalise to mean values */
-	//gsl_blas_dscal((1 / (double)nIter), nrMImeanVec); /* E/N */
-	//gsl_blas_dscal((1 / (double)nIter), nrMIvarVec); /* E^2/N */
+	gsl_blas_dscal((1 / (double)nIter), nrMImeanVec); /* E/N */
+	gsl_blas_dscal((1 / (double)nIter), nrMIvarVec); /* E^2/N */
 
 	/* compute E^2/N - (E/N)^2 */
-	//gsl_vector_memcpy(nrMImeanVecCp, nrMImeanVec);
-	//gsl_vector_mul(nrMImeanVecCp, nrMImeanVecCp);
-	//gsl_vector_sub(nrMIvarVec, nrMImeanVecCp);
+	gsl_vector_memcpy(nrMImeanVecCp, nrMImeanVec);
+	gsl_vector_mul(nrMImeanVecCp, nrMImeanVecCp);
+	gsl_vector_sub(nrMIvarVec, nrMImeanVecCp);
 
 	/* write vectors */
-	//sprintf(outFileName_nrMI, "%s%s", arg.prefix, "nrMI.dat");
-	//outFile_nrMI = fopen(outFileName_nrMI, "w");
-	//fprintf(outFile_nrMI, "col1\tcol2\tmean(nrMI)\tsd(nrMI)\n");
-	//for (x = 0, nMI = 0; x < L - 1; ++ x) {
-	//	for (y = x + 1; y < L; ++ y) {
-	//		fprintf(outFile_nrMI, "%d\t%d\t%lf\t%lg\n", x+1, y+1,
-	//					gsl_vector_get(nrMImeanVec, nMI),
-	//					sqrt(gsl_vector_get(nrMIvarVec, nMI)));	
-	//		++ nMI;
-	//	}
-	//}
-	//end = clock();
-	//time_spent_nrMI = (double)(end - begin) / CLOCKS_PER_SEC;
-	//fprintf(stdout, "\n\tt(nrMI): %lf s\n", time_spent_nrMI);
-	//fclose(outFile_nrMI);
+	sprintf(outFileName_nrMI, "%s%s", arg.prefix, "nrMI.dat");
+	outFile_nrMI = fopen(outFileName_nrMI, "w");
+	fprintf(outFile_nrMI, "col1\tcol2\tmean(nrMI)\tsd(nrMI)\n");
+	for (x = 0, nMI = 0; x < L - 1; ++ x) {
+		for (y = x + 1; y < L; ++ y) {
+			fprintf(outFile_nrMI, "%d\t%d\t%lf\t%lg\n", x+1, y+1,
+						gsl_vector_get(nrMImeanVec, nMI),
+						sqrt(gsl_vector_get(nrMIvarVec, nMI)));	
+			++ nMI;
+		}
+	}
+	end = clock();
+	time_spent_nrMI = (double)(end - begin) / CLOCKS_PER_SEC;
+	fprintf(stdout, "\n\tt(nrMI): %lf s\n", time_spent_nrMI);
+	fclose(outFile_nrMI);
 
 	/*____________________________________________________________________________*/
 	/* write times spent */
-	//sprintf(outFileName_time , "%s%s", arg.prefix, "time.dat");
-	//outFile_time = fopen(outFileName_time, "w");
-	//fprintf(outFile_time, "%d\t%lf\t%lf\n", arg.nsubset, time_spent_arMI, time_spent_nrMI);
-	//fclose(outFile_time);
+	sprintf(outFileName_time , "%s%s", arg.prefix, "time.dat");
+	outFile_time = fopen(outFileName_time, "w");
+	fprintf(outFile_time, "%d\t%lf\t%lf\n", arg.nsubset, time_spent_arMI, time_spent_nrMI);
+	fclose(outFile_time);
 
 	/*____________________________________________________________________________*/
 	/* compute rmsd between all pairs of arMI and nrMI */
-	//gsl_vector *rmsdvec = gsl_vector_calloc(nPairs);
-	//gsl_vector_memcpy(rmsdvec, arMIvec);
+	gsl_vector *rmsdvec = gsl_vector_calloc(nPairs);
+	gsl_vector_memcpy(rmsdvec, arMIvec);
 	/* difference */
-	//gsl_vector_sub(rmsdvec,nrMIvec);
+	gsl_vector_sub(rmsdvec,nrMIvec);
 	/* Euclidean norm */
-	//rmsd = gsl_blas_dnrm2(rmsdvec) / nPairs;
+	rmsd = gsl_blas_dnrm2(rmsdvec) / nPairs;
 	
-	//sprintf(outFileName_rmsd, "%s%s", arg.prefix, "rmsd.dat");
-	//outFile_rmsd = fopen(outFileName_rmsd, "w");
-	//fprintf(outFile_rmsd, "%d\t%lf\n", arg.nsubset, rmsd);
-	//fclose(outFile_rmsd);
+	sprintf(outFileName_rmsd, "%s%s", arg.prefix, "rmsd.dat");
+	outFile_rmsd = fopen(outFileName_rmsd, "w");
+	fprintf(outFile_rmsd, "%d\t%lf\n", arg.nsubset, rmsd);
+	fclose(outFile_rmsd);
 
 	/*____________________________________________________________________________*/
+	/* free memory */
 	//gsl_matrix_free(MI_mat);
 	//gsl_matrix_free(p_E);
 	//gsl_matrix_free(p_E_rand);

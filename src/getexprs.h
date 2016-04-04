@@ -21,6 +21,6 @@ Read the COPYING file for license information.
 /* prototypes */
 int get_rownames(FILE *rownamesInFile, Expr *expr);
 int get_colnames(FILE *colnamesInFile, Expr *expr);
-int read_expression(FILE *exprInFile, Expr *expr);
+void read_expression(FILE *exprInFile, Expr *expr);
 
 #endif

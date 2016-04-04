@@ -414,13 +414,15 @@ noinst_DATA = \
 	dist.1.fasta dist.2.fasta   dist.3.fasta  dist.4.fasta  dist.5.fasta  \
 	dist.6.fasta dist.7.fasta   dist.8.fasta  dist.9.fasta  dist.10.fasta \
 	dist.11.fasta dist.12.fasta dist.13.fasta dist.14.fasta dist.15.fasta \
-	dist.16.fasta dist.17.fasta dist.18.fasta dist.19.fasta dist.20.fasta
+	dist.16.fasta dist.17.fasta dist.18.fasta dist.19.fasta dist.20.fasta \
+	rownames.dat colnames.dat expr_tf.dat
 
 noinst_SCRIPTS = \
 	help.sh \
 	random.sh \
 	rasH_fragment.sh \
-	baseset_dist.sh
+	baseset_dist.sh \
+	exptession.sh
 
 EXTRA_DIST = $(noinst_DATA) $(noinst_SCRIPTS)
 TESTS = $(noinst_SCRIPTS)
@@ -630,6 +632,13 @@ rasH_fragment.sh.log: rasH_fragment.sh
 baseset_dist.sh.log: baseset_dist.sh
 	@p='baseset_dist.sh'; \
 	b='baseset_dist.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+exptession.sh.log: exptession.sh
+	@p='exptession.sh'; \
+	b='exptession.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

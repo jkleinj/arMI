@@ -320,16 +320,16 @@ TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home/jkleinj/arMI/arMI/missing aclocal-1.14
+ACLOCAL = ${SHELL} /home2/jkleinj/arMI/arMI/missing aclocal-1.14
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
-AUTOCONF = ${SHELL} /home/jkleinj/arMI/arMI/missing autoconf
-AUTOHEADER = ${SHELL} /home/jkleinj/arMI/arMI/missing autoheader
-AUTOMAKE = ${SHELL} /home/jkleinj/arMI/arMI/missing automake-1.14
+AUTOCONF = ${SHELL} /home2/jkleinj/arMI/arMI/missing autoconf
+AUTOHEADER = ${SHELL} /home2/jkleinj/arMI/arMI/missing autoheader
+AUTOMAKE = ${SHELL} /home2/jkleinj/arMI/arMI/missing automake-1.14
 AWK = mawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -ggdb -O0
+CFLAGS = -g -O2
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
@@ -350,7 +350,7 @@ LDFLAGS =
 LIBOBJS = 
 LIBS = -lgsl -lgslcblas -lm 
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/jkleinj/arMI/arMI/missing makeinfo
+MAKEINFO = ${SHELL} /home2/jkleinj/arMI/arMI/missing makeinfo
 MKDIR_P = /bin/mkdir -p
 MPICC = 
 MPILIBS = 
@@ -367,10 +367,10 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = 
 VERSION = 1.1.0
-abs_builddir = /home/jkleinj/arMI/arMI/tests
-abs_srcdir = /home/jkleinj/arMI/arMI/tests
-abs_top_builddir = /home/jkleinj/arMI/arMI
-abs_top_srcdir = /home/jkleinj/arMI/arMI
+abs_builddir = /home2/jkleinj/arMI/arMI/tests
+abs_srcdir = /home2/jkleinj/arMI/arMI/tests
+abs_top_builddir = /home2/jkleinj/arMI/arMI
+abs_top_srcdir = /home2/jkleinj/arMI/arMI
 ac_ct_CC = gcc
 am__include = include
 am__leading_dot = .
@@ -389,7 +389,7 @@ host_alias =
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/jkleinj/arMI/arMI/install-sh
+install_sh = ${SHELL} /home2/jkleinj/arMI/arMI/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -414,13 +414,15 @@ noinst_DATA = \
 	dist.1.fasta dist.2.fasta   dist.3.fasta  dist.4.fasta  dist.5.fasta  \
 	dist.6.fasta dist.7.fasta   dist.8.fasta  dist.9.fasta  dist.10.fasta \
 	dist.11.fasta dist.12.fasta dist.13.fasta dist.14.fasta dist.15.fasta \
-	dist.16.fasta dist.17.fasta dist.18.fasta dist.19.fasta dist.20.fasta
+	dist.16.fasta dist.17.fasta dist.18.fasta dist.19.fasta dist.20.fasta \
+	rownames.dat colnames.dat expr_tf.dat
 
 noinst_SCRIPTS = \
 	help.sh \
 	random.sh \
 	rasH_fragment.sh \
-	baseset_dist.sh
+	baseset_dist.sh \
+	exptession.sh
 
 EXTRA_DIST = $(noinst_DATA) $(noinst_SCRIPTS)
 TESTS = $(noinst_SCRIPTS)
@@ -630,6 +632,13 @@ rasH_fragment.sh.log: rasH_fragment.sh
 baseset_dist.sh.log: baseset_dist.sh
 	@p='baseset_dist.sh'; \
 	b='baseset_dist.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+exptession.sh.log: exptession.sh
+	@p='exptession.sh'; \
+	b='exptession.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
