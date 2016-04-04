@@ -67,12 +67,14 @@ int read_expression(FILE *exprfile, Expr *expr)
 	unsigned int nDat = 0;
 
 	expr->read = alloc_mat2D_float(expr->read, expr->nrow, expr->ncol);
+	expr->level = alloc_mat2D_float(expr->level, expr->nrow, expr->ncol);
 
 	while(! feof(exprfile)) {
         /* scan expression data */
         if (fscanf(exprfile, "%f", &(expr->read[row][col])) == 1) {
 #ifdef DEBUG
-			fprintf(stderr, "%d %d %f\n", i, j, expr->read[row][col]);
+			fprintf(stderr, "row %d, col, %d, value %f\n",
+					row, col, expr->read[row][col]);
 #endif
 			++ col;
 			++ nDat;
@@ -80,6 +82,9 @@ int read_expression(FILE *exprfile, Expr *expr)
 		if (col == expr->ncol) {
 			++ row;
 			col = 0;
+		}
+		if (row == expr->nrow) {
+			break;
 		}
 	}
 

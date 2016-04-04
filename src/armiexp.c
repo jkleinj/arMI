@@ -283,7 +283,7 @@ __inline__ static double randomise_matrix(gsl_matrix *mali_rand, gsl_matrix *mal
 int main(int argc, char *argv[])
 {
 	int e;
-	unsigned int i, l, n, x, y, zz;
+	unsigned int i, j, l, n, x, y, zz;
 	char outFileName_arMI[128];
 	char outFileName_MI[128];
 	char outFileName_nrMI[128];
@@ -367,28 +367,23 @@ int main(int argc, char *argv[])
 		fprintf(stdout, "\tnumber of expression values: %d\n", expr.ndat);
 	}
 
-	exit(1);
     /*____________________________________________________________________________*/
-	//E = max(log2()); /* number of expression levels */
+	/* determine min/max expression values and number of expression levels */
+	/* create expression level matrix */
+	expr.min = FLT_MAX;
+	expr.max = FLT_MIN;
+	for (i = 0; i < expr.nrow; ++ i) {
+		for (j = 0; j < expr.ncol; ++ j) {
+			assert((expr.read[i][j] >= 0.) && "expression values should be positive");
+			expr.level[i][j] = (int)roundf(log2(expr.read[i][j]));
+			expr.min = fminf(expr.read[i][j], expr.min);
+			expr.max = fmax(expr.read[i][j], expr.max);
+		}
+	}
 
-	/*____________________________________________________________________________*/
-	/* create alignment matrix */
-	/*   and count gap frequencies */
-	//unsigned int Ngap[L];
-	//for (l = 0; l < L; ++ l) {
-	//	Ngap[l] = 0;
-	//}
-	
-	//gsl_matrix *mali = gsl_matrix_calloc(N, L); /* mali matrix */
-
-	//for (n = 0; n < N; ++ n) {
-	//	for (l = 0; l < L; ++ l) {
-	//		gsl_matrix_set(mali, n, l, (double)(sequence[n].residue[l] - 64));
-	//		if ((int)gsl_matrix_get(mali, n, l) == 0) {
-	//			++ Ngap[l];
-	//		}
-	//	}
-	//}
+	E = ceil(log2(expr.max)); /* number of expression levels (in bits) */
+	fprintf(stdout, "\tmin: %f, max: %f\n\texpression levels: %d bit\n",
+			expr.min, expr.max, E);
 
 	/*____________________________________________________________________________*/
 	/* compute column-wise element probability matrix p_E */
