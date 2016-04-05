@@ -189,9 +189,9 @@ __inline__ static void armi(gsl_matrix *MI_mat_, unsigned int N,
 /*____________________________________________________________________________*/
 /* MIxy */
 /*____________________________________________________________________________*/
-__inline__ static void columnpair_mutual_information(gsl_matrix *mali_, unsigned int N,
+__inline__ static void columnpair_mutual_information(gsl_matrix *level_, unsigned int N,
 						unsigned int L,	gsl_matrix *p_E_, unsigned int E,
-						unsigned int *Ngap, FILE *outFile_, gsl_vector *MIvec_)
+						FILE *outFile_, gsl_vector *MIvec_)
 {
 	unsigned int e_x, e_y, n, x, y;
 	double MIxy = 0.;
@@ -200,15 +200,12 @@ __inline__ static void columnpair_mutual_information(gsl_matrix *mali_, unsigned
 	gsl_matrix *p_EE = gsl_matrix_calloc(E, E);
 	double w_ee;
 	double dN = (double)N;
-	double dNgapx, dNgapy;
 
 	/* for all column pairs */
 	/* for first columns x */
 	for (x = 0; x < L - 1; ++ x) {
-		dNgapx = (double)Ngap[x];
 		/* for second columns y */
 		for (y = x + 1; y < L; ++ y) {
-			dNgapy = (double)Ngap[y];
 			/* reset p_EE for each column pair */
 			gsl_matrix_set_zero(p_EE);
 			/* compute pair weight */
@@ -217,8 +214,8 @@ __inline__ static void columnpair_mutual_information(gsl_matrix *mali_, unsigned
 			/* for n sequences */
 			for (n = 0; n < N; ++ n) {
 				/* get probability of alignment elements (characters) at positions [n,x] and [n,y] */
-				e_x = (int)gsl_matrix_get(mali_, n, x);
-				e_y = (int)gsl_matrix_get(mali_, n, y);
+				e_x = (int)gsl_matrix_get(level_, n, x);
+				e_y = (int)gsl_matrix_get(level_, n, y);
 				/* compute element pair probabilities */
 				gsl_matrix_set(p_EE, e_x, e_y, gsl_matrix_get(p_EE, e_x, e_y) + w_ee);
 			}
@@ -246,7 +243,7 @@ __inline__ static void columnpair_mutual_information(gsl_matrix *mali_, unsigned
 /*____________________________________________________________________________*/
 /* column shuffle by random permutation */
 /*____________________________________________________________________________*/
-__inline__ static double randomise_matrix(gsl_matrix *mali_rand, gsl_matrix *mali, unsigned int N, unsigned int L)
+__inline__ static double randomise_matrix(gsl_matrix *level_rand, gsl_matrix *level, unsigned int N, unsigned int L)
 {
 	unsigned int l, n;
 
@@ -262,12 +259,12 @@ __inline__ static double randomise_matrix(gsl_matrix *mali_rand, gsl_matrix *mal
 	/* shuffle column values */
 	for (l = 0; l < L; ++ l) {
 		for (n = 0; n < N; ++ n) {
-			c[n] = (int)gsl_matrix_get(mali, n, l);
+			c[n] = (int)gsl_matrix_get(level, n, l);
 		}
 
 		gsl_ran_shuffle(r, c, N, sizeof(int));
 		for (n = 0; n < N; ++ n) {
-			gsl_matrix_set(mali_rand, n, l, (double)c[n]);
+			gsl_matrix_set(level_rand, n, l, (double)c[n]);
 		}
 	}
 
@@ -283,13 +280,12 @@ __inline__ static double randomise_matrix(gsl_matrix *mali_rand, gsl_matrix *mal
 int main(int argc, char *argv[])
 {
 	int e;
-	unsigned int i, j, l, n, x, y, zz;
+	unsigned int i, l, n, x, y, zz;
 	char outFileName_arMI[128];
 	char outFileName_MI[128];
 	char outFileName_nrMI[128];
 	char outFileName_rmsd[128];
 	char outFileName_time[128];
-	char outFileName_seq[128];
 	char outDirName[128];
 	FILE *outFile_arMI = 0;
 	FILE *outFile_MI = 0;
@@ -297,7 +293,6 @@ int main(int argc, char *argv[])
 	FILE *outFile_nrMI = 0;
 	FILE *outFile_rmsd = 0;
 	FILE *outFile_time = 0;
-	FILE *outFile_seq = 0;
 
 	Arg arg; /* command line arguments */
 	Expr expr; /* expression values */
@@ -305,8 +300,6 @@ int main(int argc, char *argv[])
 	unsigned int N = 0; /* number of genes (rows) */
 	unsigned int L = 0; /* length of sample dimension (columns) */
 	unsigned int E = 0; /* number of expression levels */
-
-	unsigned int allocated = 64;
 
 	char nrMIit[64];
 	const unsigned int nIter = 100;
@@ -364,7 +357,7 @@ int main(int argc, char *argv[])
 		read_expression(arg.exprfile, &expr);
 		fclose(arg.exprfile);
 
-		fprintf(stdout, "\tnumber of expression values: %d\n", expr.ndat);roundf(log2(expr.read[i][j]))log2(expr.read[i][j])
+		fprintf(stdout, "\tnumber of expression values: %d\n", expr.ndat);
 	}
 
     /*____________________________________________________________________________*/
@@ -374,16 +367,16 @@ int main(int argc, char *argv[])
 
 	expr.min = FLT_MAX;
 	expr.max = FLT_MIN;
-	for (i = 0; i < expr.nrow; ++ i) {
-		for (j = 0; j < expr.ncol; ++ j) {
-			assert((expr.read[i][j] >= 0.) && "expression values should be positive");
-			if (expr.read[i][j] > 0.) {
-				gsl_matrix_set(level, n, l, (double)roundf(log2(expr.read[i][j]));
+	for (n = 0; n < expr.nrow; ++ n) {
+		for (l = 0; l < expr.ncol; ++ l) {
+			assert((expr.read[n][l] >= 0.) && "expression values should be positive");
+			if (expr.read[n][l] > 0.) {
+				gsl_matrix_set(level, n, l, (double)roundf(log2(expr.read[n][l])));
 			} else {
 				gsl_matrix_set(level, n, l, (double)0.);
 			}
-			expr.min = fminf(expr.read[i][j], expr.min);
-			expr.max = fmax(expr.read[i][j], expr.max);
+			expr.min = fminf(expr.read[n][l], expr.min);
+			expr.max = fmax(expr.read[n][l], expr.max);
 		}
 	}
 
@@ -434,7 +427,7 @@ int main(int argc, char *argv[])
 	time_spent_arMI = (double)(end - begin) / CLOCKS_PER_SEC;
 	fprintf(stdout, "\n\tt(arMI): %lf s\n", time_spent_arMI);
 	fclose(outFile_arMI);
-exit(1);
+
 	/*____________________________________________________________________________*/
 	/* MI > 'MI.dat': */
 	fprintf(stdout, "\nComputing MI\n");
@@ -459,7 +452,7 @@ exit(1);
 	fprintf(stdout, "\trandomising input alignment %d times\n", nIter);
 
 	/* randomised mali matrix */
-	gsl_matrix *mali_rand = gsl_matrix_calloc(N, L);
+	gsl_matrix *level_rand = gsl_matrix_calloc(N, L);
 	/* probabilities of elements */
 	gsl_matrix *p_E_rand = gsl_matrix_calloc(E, L);
 	/* nrMI values of repeated randomisation */
@@ -492,9 +485,9 @@ exit(1);
 		fprintf(outFile_nrMIit, "col1\tcol2\tnrMI\n");
 
 		if (i == 0) {
-			randomise_matrix(mali_rand, mali, N, L);
+			randomise_matrix(level_rand, level, N, L);
 		} else {
-			randomise_matrix(mali_rand, mali_rand, N, L);
+			randomise_matrix(level_rand, level_rand, N, L);
 		}
 		gsl_matrix_set_zero(p_E_rand);
 		gsl_vector_set_zero(nrMIvec);
@@ -505,15 +498,15 @@ exit(1);
 				probablities of alphabet elements in column 'l' */
 			for (n = 0; n < N; ++ n) {
 				/* set current element (0 - 25) */
-				e = (int)gsl_matrix_get(mali_rand, n, l);
+				e = (int)gsl_matrix_get(level_rand, n, l);
 				if (e > 0) {
 					gsl_matrix_set(p_E_rand, e, l, (gsl_matrix_get(p_E_rand, e, l)
-												+ (1 / (double)(N - Ngap[l]))));
+												+ (1 / (double)(N))));
 				}
 			}
 		}
 
-		columnpair_mutual_information(mali_rand, N, L, p_E_rand, E, Ngap, outFile_nrMIit, nrMIvec);
+		columnpair_mutual_information(level_rand, N, L, p_E_rand, E, outFile_nrMIit, nrMIvec);
 		/* sum(MI) of each column pair over iterations */
 		gsl_vector_add(nrMImeanVec, nrMIvec);
 		/* sum(MI^2) of each column pair over iterations */
@@ -572,25 +565,22 @@ exit(1);
 
 	/*____________________________________________________________________________*/
 	/* free memory */
-	//gsl_matrix_free(MI_mat);
-	//gsl_matrix_free(p_E);
-	//gsl_matrix_free(p_E_rand);
-	//gsl_matrix_free(mali);
-	//gsl_matrix_free(mali_rand);
-	//gsl_vector_free(arMIvec);
-	//gsl_vector_free(cMIvec);
-	//gsl_vector_free(nrMIvec);
-	//gsl_vector_free(nrMImeanVec);
-	//gsl_vector_free(nrMImeanVecCp);
-	//gsl_vector_free(nrMIvarVec);
-	//gsl_vector_free(rmsdvec);
+	gsl_matrix_free(MI_mat);
+	gsl_matrix_free(p_E);
+	gsl_matrix_free(p_E_rand);
+	gsl_matrix_free(level);
+	gsl_matrix_free(level_rand);
+	gsl_vector_free(arMIvec);
+	gsl_vector_free(cMIvec);
+	gsl_vector_free(nrMIvec);
+	gsl_vector_free(nrMImeanVec);
+	gsl_vector_free(nrMImeanVecCp);
+	gsl_vector_free(nrMIvarVec);
+	gsl_vector_free(rmsdvec);
 
-	//for (n = 0; n < N; ++ n) {
-	//	free(sequence[n].name);
-	//	free(sequence[n].residue);
-	//}
-
-	//free(sequence);
+	free_mat2D_float(expr.read, expr.nrow);
+	free(expr.colname);
+	free(expr.rowname);
 
 	/*____________________________________________________________________________*/
 	/* termination*/
