@@ -363,6 +363,8 @@ int main(int argc, char *argv[])
     /*____________________________________________________________________________*/
 	/* determine min/max expression values and number of expression levels */
 	/* create expression level matrix */
+	/* we shift the levels by +1 to keep the routines identical to those for
+		sequences, where '0' indicates a gap (which is ignored) */
 	gsl_matrix *level = gsl_matrix_calloc(N, L); /* expression level matrix */
 
 	expr.min = FLT_MAX;
@@ -371,16 +373,16 @@ int main(int argc, char *argv[])
 		for (l = 0; l < expr.ncol; ++ l) {
 			assert((expr.read[n][l] >= 0.) && "expression values should be positive");
 			if (expr.read[n][l] > 0.) {
-				gsl_matrix_set(level, n, l, (double)roundf(log2(expr.read[n][l])));
+				gsl_matrix_set(level, n, l, (double)roundf(log2(expr.read[n][l]) + 1.));
 			} else {
-				gsl_matrix_set(level, n, l, (double)0.);
+				gsl_matrix_set(level, n, l, (double)1.);
 			}
 			expr.min = fminf(expr.read[n][l], expr.min);
 			expr.max = fmax(expr.read[n][l], expr.max);
 		}
 	}
 
-	E = ceil(log2(expr.max)); /* number of expression levels (in bits) */
+	E = ceil(log2(expr.max) + 1.); /* number of expression levels (in bits) */
 	fprintf(stdout, "\tmin: %f, max: %f\n\texpression levels: %d bit\n",
 			expr.min, expr.max, E);
 
@@ -451,7 +453,7 @@ int main(int argc, char *argv[])
 	fprintf(stdout, "\nComputing nrMI\n");
 	fprintf(stdout, "\trandomising input alignment %d times\n", nIter);
 
-	/* randomised mali matrix */
+	/* randomised expression level matrix */
 	gsl_matrix *level_rand = gsl_matrix_calloc(N, L);
 	/* probabilities of elements */
 	gsl_matrix *p_E_rand = gsl_matrix_calloc(E, L);

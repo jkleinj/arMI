@@ -15,7 +15,7 @@ noinst_SCRIPTS = \
 	random.sh \
 	rasH_fragment.sh \
 	baseset_dist.sh \
-	exptession.sh
+	expression.sh
 
 EXTRA_DIST = $(noinst_DATA) $(noinst_SCRIPTS)
 

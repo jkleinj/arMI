@@ -204,14 +204,12 @@ __inline__ static void columnpair_mutual_information(gsl_matrix *level_, unsigne
 	/* for all column pairs */
 	/* for first columns x */
 	for (x = 0; x < L - 1; ++ x) {
-		dNgapx = (double)Ngap[x];
 		/* for second columns y */
 		for (y = x + 1; y < L; ++ y) {
-			dNgapy = (double)Ngap[y];
 			/* reset p_EE for each column pair */
 			gsl_matrix_set_zero(p_EE);
 			/* compute pair weight */
-			w_ee = 1 / (((dN - dNgapx) / dN) * (dN - dNgapy) / dN * dN);
+			w_ee = 1 / dN;
 			/* compute p_EE for column pair x,y */
 			/* for n rows */
 			for (n = 0; n < N; ++ n) {

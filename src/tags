@@ -4,56 +4,112 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-ARG_H	arg.h	8;"	d
-ARMI_H	armi.h	8;"	d
-Arg	arg.h	/^} Arg;$/;"	t	typeref:struct:__anon2
-BINCOCACHE	bincocache.h	1;"	d
-BINCO_H	binco.h	8;"	d
+ARGALI_H	argali.h	8;"	d
+ARGEXP_H	argexp.h	8;"	d
+ARMIALI_H	armiali.h	8;"	d
+ARMIEXP_H	armiexp.h	8;"	d
+Arg	argali.h	/^} Arg;$/;"	t	typeref:struct:__anon3
+Arg	argexp.h	/^} Arg;$/;"	t	typeref:struct:__anon1
+EXPR_H	expr.h	8;"	d
+Expr	expr.h	/^} Expr; $/;"	t	typeref:struct:__anon4
+GETEXPRS_H	getexprs.h	8;"	d
 GETSEQS_H	getseqs.h	9;"	d
 MATRIX_H	matrix.h	8;"	d
-Nmax	armi.c	/^const unsigned int Nmax = 10000;$/;"	v
-Nmin	armi.c	/^const unsigned int Nmin = 1;$/;"	v
 SAFE_H	safe.h	8;"	d
 SEQ_H	seq.h	8;"	d
-Seq	seq.h	/^} Seq;$/;"	t	typeref:struct:__anon1
+Seq	seq.h	/^} Seq;$/;"	t	typeref:struct:__anon2
+alloc_mat2D_float	matrix.c	/^float **alloc_mat2D_float(float **mat2D_float, int x, int y)$/;"	f
+alloc_mat2D_int	matrix.c	/^int **alloc_mat2D_int(int **mat2D_int, int x, int y)$/;"	f
 alloc_mat3D_double	matrix.c	/^double ***alloc_mat3D_double(double ***mat3D_double, int x, int y, int z)$/;"	f
+alloc_mat3D_float	matrix.c	/^float ***alloc_mat3D_float(float ***mat3D_float, int x, int y, int z)$/;"	f
+alloc_mat3D_int	matrix.c	/^int ***alloc_mat3D_int(int ***mat3D_int, int x, int y, int z)$/;"	f
 alloc_mat3D_longdouble	matrix.c	/^long double ***alloc_mat3D_longdouble(long double ***mat3D_longdouble, int x, int y, int z)$/;"	f
-check_input	arg.c	/^static void check_input(Arg *arg)$/;"	f	file:
+alloc_mat4D_float	matrix.c	/^float ****alloc_mat4D_float(float ****mat4D_float, int w, int x, int y, int z)$/;"	f
+alloc_mat4D_int	matrix.c	/^int ****alloc_mat4D_int(int ****mat4D_int, int w, int x, int y, int z)$/;"	f
+armi	armiali.c	/^__inline__ static void armi(gsl_matrix *MI_mat_, unsigned int N,$/;"	f	file:
+armi	armiexp.c	/^__inline__ static void armi(gsl_matrix *MI_mat_, unsigned int N,$/;"	f	file:
+check_input	argali.c	/^static void check_input(Arg *arg)$/;"	f	file:
+check_input	argexp.c	/^static void check_input(Arg *arg)$/;"	f	file:
 check_non_null	safe.c	/^void *check_non_null(void *ptr)$/;"	f
-columnpair_mutual_information	armi.c	/^__inline__ static void columnpair_mutual_information(gsl_matrix *mali_, unsigned int N,$/;"	f	file:
-compute_binco	binco.c	/^static void compute_binco(gsl_matrix *binco)$/;"	f	file:
-factorial	binco.c	/^__inline__ static long double factorial(unsigned int n)$/;"	f	file:
+colfile	argexp.h	/^    FILE *colfile;$/;"	m	struct:__anon1
+colfilename	argexp.h	/^	char *colfilename;$/;"	m	struct:__anon1
+colname	expr.h	/^	char (*colname)[64];$/;"	m	struct:__anon4
+columnpair_mutual_information	armiali.c	/^__inline__ static void columnpair_mutual_information(gsl_matrix *mali_, unsigned int N,$/;"	f	file:
+columnpair_mutual_information	armiexp.c	/^__inline__ static void columnpair_mutual_information(gsl_matrix *level_, unsigned int N,$/;"	f	file:
+div_mat2D_float	matrix.c	/^void div_mat2D_float(float **mat2D_float, int x, int y, float a)$/;"	f
+exprfile	argexp.h	/^    FILE *exprfile;$/;"	m	struct:__anon1
+exprfilename	argexp.h	/^	char *exprfilename;$/;"	m	struct:__anon1
+factorial	armiali.c	/^__inline__ static long double factorial(unsigned int n)$/;"	f	file:
+factorial	armiexp.c	/^__inline__ static long double factorial(unsigned int n)$/;"	f	file:
+free_mat2D_float	matrix.c	/^void free_mat2D_float(float **mat2D_float, int x)$/;"	f
+free_mat2D_int	matrix.c	/^void free_mat2D_int(int **mat2D_int, int x)$/;"	f
 free_mat3D_double	matrix.c	/^void free_mat3D_double(double ***mat3D_double, int x, int y)$/;"	f
+free_mat3D_float	matrix.c	/^void free_mat3D_float(float ***mat3D_float, int x, int y)$/;"	f
+free_mat3D_int	matrix.c	/^void free_mat3D_int(int ***mat3D_int, int x, int y)$/;"	f
 free_mat3D_longdouble	matrix.c	/^void free_mat3D_longdouble(long double ***mat3D_longdouble, int x, int y)$/;"	f
-get_binco	binco.c	/^void get_binco(gsl_matrix *binco)$/;"	f
-get_rand_int	armi.c	/^__inline__ static int get_rand_int(unsigned int min, unsigned int max)$/;"	f	file:
-inFile	arg.h	/^    FILE *inFile;$/;"	m	struct:__anon2
-inFileName	arg.h	/^	char *inFileName;$/;"	m	struct:__anon2
+free_mat4D_float	matrix.c	/^void free_mat4D_float(float ****mat4D_float, int w, int x, int y)$/;"	f
+free_mat4D_int	matrix.c	/^void free_mat4D_int(int ****mat4D_int, int w, int x, int y)$/;"	f
+get_colnames	getexprs.c	/^int get_colnames(FILE *colfile, Expr *expr)$/;"	f
+get_rand_int	armiali.c	/^__inline__ static int get_rand_int(unsigned int min, unsigned int max)$/;"	f	file:
+get_rand_int	armiexp.c	/^__inline__ static int get_rand_int(unsigned int min, unsigned int max)$/;"	f	file:
+get_rownames	getexprs.c	/^int get_rownames(FILE *rowfile, Expr *expr)$/;"	f
+infile	argali.h	/^    FILE *infile;$/;"	m	struct:__anon3
+infilename	argali.h	/^	char *infilename;$/;"	m	struct:__anon3
+init_mat2D_float	matrix.c	/^void init_mat2D_float(float **mat2D_float, int x, int y, float val)$/;"	f
+init_mat2D_int	matrix.c	/^void init_mat2D_int(int **mat2D_int, int x, int y, int val)$/;"	f
 init_mat3D_double	matrix.c	/^void init_mat3D_double(double ***mat3D_double, int x, int y, int z, double val)$/;"	f
+init_mat3D_float	matrix.c	/^void init_mat3D_float(float ***mat3D_float, int x, int y, int z, float val)$/;"	f
+init_mat3D_int	matrix.c	/^void init_mat3D_int(int ***mat3D_int, int x, int y, int z, int val)$/;"	f
 init_mat3D_longdouble	matrix.c	/^void init_mat3D_longdouble(long double ***mat3D_longdouble, int x, int y, int z, long double val)$/;"	f
-lSeq	arg.h	/^	int lSeq; \/* length of alignment *\/$/;"	m	struct:__anon2
-length	seq.h	/^    int length; \/* length of sequence *\/$/;"	m	struct:__anon1
-main	armi.c	/^int main(int argc, char *argv[])$/;"	f
-nEle	arg.h	/^	int nEle; \/* number of alphabet elements *\/$/;"	m	struct:__anon2
-nSeq	arg.h	/^	int nSeq; \/* number of sequences *\/$/;"	m	struct:__anon2
-nSubset	arg.h	/^	int nSubset; \/* number of sequences in subset *\/$/;"	m	struct:__anon2
-name	seq.h	/^    char *name; \/* sequence name *\/$/;"	m	struct:__anon1
-parse_args	arg.c	/^int parse_args(int argc, char **argv, Arg *arg)$/;"	f
-prefix	arg.h	/^	char *prefix; \/* output prefix *\/$/;"	m	struct:__anon2
-print_args	arg.c	/^static void print_args(Arg *arg)$/;"	f	file:
-print_citation	arg.c	/^static void print_citation()$/;"	f	file:
-print_header	arg.c	/^static void print_header()$/;"	f	file:
-print_license	arg.c	/^static void print_license()$/;"	f	file:
-print_version	arg.c	/^static void print_version()$/;"	f	file:
-random	arg.h	/^	int random;$/;"	m	struct:__anon2
-randomise_matrix	armi.c	/^__inline__ static double randomise_matrix(gsl_matrix *mali_rand, gsl_matrix *mali, unsigned int N, unsigned int L)$/;"	f	file:
+init_mat4D_float	matrix.c	/^void init_mat4D_float(float ****mat4D_float, int w, int x, int y, int z, float val)$/;"	f
+init_mat4D_int	matrix.c	/^void init_mat4D_int(int ****mat4D_int, int w, int x, int y, int z, int val)$/;"	f
+length	seq.h	/^    int length; \/* length of sequence *\/$/;"	m	struct:__anon2
+lseq	argali.h	/^	int lseq; \/* length of alignment *\/$/;"	m	struct:__anon3
+main	armiali.c	/^int main(int argc, char *argv[])$/;"	f
+main	armiexp.c	/^int main(int argc, char *argv[])$/;"	f
+max	expr.h	/^	float max; \/* maximum expression value *\/$/;"	m	struct:__anon4
+min	expr.h	/^	float min; \/* minimum expression value *\/$/;"	m	struct:__anon4
+name	seq.h	/^    char *name; \/* sequence name *\/$/;"	m	struct:__anon2
+ncol	argexp.h	/^	int ncol; \/* number of columns (samples) *\/$/;"	m	struct:__anon1
+ncol	expr.h	/^	int ncol; \/* number of columns *\/$/;"	m	struct:__anon4
+ndat	expr.h	/^	int ndat; \/* number of expression values *\/$/;"	m	struct:__anon4
+nele	argali.h	/^	int nele; \/* number of alphabet elements *\/$/;"	m	struct:__anon3
+nele	argexp.h	/^	int nele; \/* number of expression levels *\/$/;"	m	struct:__anon1
+nrow	argexp.h	/^	int nrow; \/* number of rows (genes) *\/$/;"	m	struct:__anon1
+nrow	expr.h	/^	int nrow; \/* number of rows *\/$/;"	m	struct:__anon4
+nseq	argali.h	/^	int nseq; \/* number of sequences *\/$/;"	m	struct:__anon3
+nsubset	argali.h	/^	int nsubset; \/* number of sequences in subset *\/$/;"	m	struct:__anon3
+nsubset	argexp.h	/^	int nsubset; \/* number of genes in subset *\/$/;"	m	struct:__anon1
+parse_args	argali.c	/^int parse_args(int argc, char **argv, Arg *arg)$/;"	f
+parse_args	argexp.c	/^int parse_args(int argc, char **argv, Arg *arg)$/;"	f
+prefix	argali.h	/^	char *prefix; \/* output prefix *\/$/;"	m	struct:__anon3
+prefix	argexp.h	/^	char *prefix; \/* output prefix *\/$/;"	m	struct:__anon1
+print_args	argali.c	/^static void print_args(Arg *arg)$/;"	f	file:
+print_args	argexp.c	/^static void print_args(Arg *arg)$/;"	f	file:
+print_citation	argali.c	/^static void print_citation()$/;"	f	file:
+print_citation	argexp.c	/^static void print_citation()$/;"	f	file:
+print_header	argali.c	/^static void print_header()$/;"	f	file:
+print_header	argexp.c	/^static void print_header()$/;"	f	file:
+print_license	argali.c	/^static void print_license()$/;"	f	file:
+print_license	argexp.c	/^static void print_license()$/;"	f	file:
+print_mat2D_float	matrix.c	/^void print_mat2D_float(char *outFileName, float **mat2D_float, int x, int y)$/;"	f
+print_mat2D_int	matrix.c	/^void print_mat2D_int(char *outFileName, int **mat2D_int, int x, int y)$/;"	f
+print_version	argali.c	/^static void print_version()$/;"	f	file:
+print_version	argexp.c	/^static void print_version()$/;"	f	file:
+random	argali.h	/^	int random;$/;"	m	struct:__anon3
+randomise_matrix	armiali.c	/^__inline__ static double randomise_matrix(gsl_matrix *mali_rand, gsl_matrix *mali, unsigned int N, unsigned int L)$/;"	f	file:
+randomise_matrix	armiexp.c	/^__inline__ static double randomise_matrix(gsl_matrix *level_rand, gsl_matrix *level, unsigned int N, unsigned int L)$/;"	f	file:
+read	expr.h	/^	float **read; \/* expression values *\/$/;"	m	struct:__anon4
+read_expression	getexprs.c	/^void read_expression(FILE *exprfile, Expr *expr)$/;"	f
 read_sequence	getseqs.c	/^int read_sequence(FILE *file, Seq *sequence)$/;"	f
 read_sequence_name	getseqs.c	/^static int read_sequence_name(FILE *file, Seq *sequence)$/;"	f	file:
 read_sequence_residues	getseqs.c	/^static void read_sequence_residues(FILE *file, Seq *sequence)$/;"	f	file:
-residual_mutual_information	armi.c	/^__inline__ static void residual_mutual_information(gsl_matrix *MI_mat_, unsigned int N,$/;"	f	file:
-residual_mutual_information_si	armi.c	/^__inline__ static void residual_mutual_information_si(gsl_matrix *MI_mat_, unsigned int N,$/;"	f	file:
-residue	seq.h	/^    char *residue; \/* array of residues = sequence *\/$/;"	m	struct:__anon1
+residue	seq.h	/^    char *residue; \/* array of residues = sequence *\/$/;"	m	struct:__anon2
+rowfile	argexp.h	/^    FILE *rowfile;$/;"	m	struct:__anon1
+rowfilename	argexp.h	/^	char *rowfilename;$/;"	m	struct:__anon1
+rowname	expr.h	/^	char (*rowname)[64];$/;"	m	struct:__anon4
 safe_malloc	safe.c	/^void *safe_malloc(size_t size)$/;"	f
 safe_open	safe.c	/^FILE *safe_open(const char *name, const char *mode)$/;"	f
 safe_realloc	safe.c	/^void *safe_realloc(void *ptr, size_t size)$/;"	f
-set_defaults	arg.c	/^static void set_defaults(Arg *arg)$/;"	f	file:
+set_defaults	argali.c	/^static void set_defaults(Arg *arg)$/;"	f	file:
+set_defaults	argexp.c	/^static void set_defaults(Arg *arg)$/;"	f	file:

@@ -422,7 +422,7 @@ noinst_SCRIPTS = \
 	random.sh \
 	rasH_fragment.sh \
 	baseset_dist.sh \
-	exptession.sh
+	expression.sh
 
 EXTRA_DIST = $(noinst_DATA) $(noinst_SCRIPTS)
 TESTS = $(noinst_SCRIPTS)
@@ -636,9 +636,9 @@ baseset_dist.sh.log: baseset_dist.sh
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-exptession.sh.log: exptession.sh
-	@p='exptession.sh'; \
-	b='exptession.sh'; \
+expression.sh.log: expression.sh
+	@p='expression.sh'; \
+	b='expression.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
