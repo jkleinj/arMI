@@ -8,6 +8,8 @@ Read the COPYING file for license information.
 
 #include "armiexp.h"
 
+#define max(a,b) (((a)>(b))?(a):(b))
+
 /*____________________________________________________________________________*/
 /* random number for target integer range [a, b] */
 /*____________________________________________________________________________*/
@@ -216,6 +218,9 @@ __inline__ static void columnpair_mutual_information(gsl_matrix *level_, unsigne
 				/* get probability of alignment elements (characters) at positions [n,x] and [n,y] */
 				e_x = (int)gsl_matrix_get(level_, n, x);
 				e_y = (int)gsl_matrix_get(level_, n, y);
+
+				assert((e_x < E) && (e_y < E));
+
 				/* compute element pair probabilities */
 				gsl_matrix_set(p_EE, e_x, e_y, gsl_matrix_get(p_EE, e_x, e_y) + w_ee);
 			}
@@ -367,24 +372,23 @@ int main(int argc, char *argv[])
 		sequences, where '0' indicates a gap (which is ignored) */
 	gsl_matrix *level = gsl_matrix_calloc(N, L); /* expression level matrix */
 
-	expr.min = FLT_MAX;
-	expr.max = FLT_MIN;
+	expr.maxLevel = 1;
 	for (n = 0; n < expr.nrow; ++ n) {
 		for (l = 0; l < expr.ncol; ++ l) {
 			assert((expr.read[n][l] >= 0.) && "expression values should be positive");
 			if (expr.read[n][l] > 0.) {
 				gsl_matrix_set(level, n, l, (double)roundf(log2(expr.read[n][l]) + 1.));
+				expr.maxLevel = max((int)gsl_matrix_get(level, n, l), expr.maxLevel);
 			} else {
 				gsl_matrix_set(level, n, l, (double)1.);
 			}
-			expr.min = fminf(expr.read[n][l], expr.min);
-			expr.max = fmax(expr.read[n][l], expr.max);
+
 		}
 	}
 
-	E = ceil(log2(expr.max) + 1.); /* number of expression levels (in bits) */
-	fprintf(stdout, "\tmin: %f, max: %f\n\texpression levels: %d bit\n",
-			expr.min, expr.max, E);
+	E = expr.maxLevel + 1; /* number of expression levels (in bits) */
+	fprintf(stdout, "\tmax: %d\n\texpression levels: %d bit\n",
+			expr.maxLevel, E);
 
 	/*____________________________________________________________________________*/
 	/* compute column-wise element probability matrix p_E */
