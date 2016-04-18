@@ -19,6 +19,8 @@ typedef struct
 	char (*colname)[64];
 	float **read; /* expression values */
 	int ndat; /* number of expression values */
+	float readmax; /* maximum read value */
+	float readmin; /* minimum read value */
 	int maxLevel; /* maximum expression value */
 } Expr; 
 

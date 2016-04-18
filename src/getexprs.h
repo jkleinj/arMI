@@ -9,10 +9,12 @@ Read the COPYING file for license information.
 
 #include <assert.h>
 #include <ctype.h>
+#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include "expr.h"
 #include "safe.h"
 #include "matrix.h"

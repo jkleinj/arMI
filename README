@@ -26,7 +26,8 @@ The row and column names are read in separately from the expression values.
 The names must not exceed 63 characters each.
 The number of row and column names determines the matrix size of the
 expression values and size mismatches lead to program termination.
-Expression values are cast into float types and grouped into log2 bins.
+Expression values are cast into float types and grouped into log2 bins
+that are scaled such that 20 bins are created.
 
 
 Install / Uninstall

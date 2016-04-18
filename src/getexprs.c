@@ -6,6 +6,9 @@ Read the COPYING file for license information.
 
 #include "getexprs.h"
 
+#define max(a,b) (((a)>(b))?(a):(b))
+#define min(a,b) (((a)<(b))?(a):(b))
+
 /*____________________________________________________________________________*/
 /* read rownames of data matrix, given in a single line */
 int get_rownames(FILE *rowfile, Expr *expr)
@@ -67,14 +70,22 @@ void read_expression(FILE *exprfile, Expr *expr)
 	unsigned int nDat = 0;
 
 	expr->read = alloc_mat2D_float(expr->read, expr->nrow, expr->ncol);
+	expr->readmin = FLT_MAX;
+	expr->readmax = FLT_MIN;
 
 	while(! feof(exprfile)) {
         /* scan expression data */
         if (fscanf(exprfile, "%f", &(expr->read[row][col])) == 1) {
+			/* determine min/max values */
+			expr->readmin = min(expr->readmin, expr->read[row][col]);
+			expr->readmax = max(expr->readmax, expr->read[row][col]);
+
 #ifdef DEBUG
-			fprintf(stderr, "row %d, col, %d, value %f\n",
-					row, col, expr->read[row][col]);
+			fprintf(stderr, "row %d, col, %d, value %f, readmin %f, readmax %f\n",
+					row, col, expr->read[row][col],
+					expr->readmin, expr->readmax);
 #endif
+
 			++ col;
 			++ nDat;
 		}

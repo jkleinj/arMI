@@ -16,6 +16,8 @@ Read the COPYING file for license information.
 #include <string.h>
 #include <time.h>
 
+#include "config.h"
+
 /*____________________________________________________________________________*/
 /* structures */
 
