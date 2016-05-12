@@ -9,6 +9,7 @@ Read the COPYING file for license information.
 #include "armiexp.h"
 
 #define max(a,b) (((a)>(b))?(a):(b))
+#define min(a,b) (((a)<(b))?(a):(b))
 
 /*____________________________________________________________________________*/
 /* random number for target integer range [a, b] */
@@ -322,8 +323,14 @@ int main(int argc, char *argv[])
 	long double completion = 0.;
 	unsigned int completion_i = 0;
 
+<<<<<<< HEAD
 	/* probability check */
 	double p_sum = 0.;
+=======
+	/* scale factor to map expression values to 20 bins */
+	float scafa = 0.;
+	double l2min = 0.; /* log2 of readmin */
+>>>>>>> 489e4697ed1840211110387031fde492b9ee9031
 
 	/*____________________________________________________________________________*/
 	/* random seed */
@@ -362,7 +369,7 @@ int main(int argc, char *argv[])
 	if (arg.exprfilename) {
 		fprintf(stdout, "\nReading expression values\n");
 
-		/* read specified alignment*/
+		/* read specified expression values */
 		arg.exprfile = safe_open(arg.exprfilename, "r");
 		read_expression(arg.exprfile, &expr);
 		fclose(arg.exprfile);
@@ -376,12 +383,22 @@ int main(int argc, char *argv[])
 	gsl_matrix *level = gsl_matrix_calloc(N, L); /* expression level matrix */
 
 	expr.maxLevel = 1;
+	scafa = 19. / (log2(expr.readmax) - log2(expr.readmin));
+	l2min = log2(expr.readmin);
+#ifdef DEBUG
+	fprintf(stderr, "readmin %f,  readmax %f, scafa %f\n",
+			expr.readmin, expr.readmax, scafa);
+#endif
 	for (n = 0; n < expr.nrow; ++ n) {
 		for (l = 0; l < expr.ncol; ++ l) {
 			assert((expr.read[n][l] >= 0.) && "expression values should be positive");
 			if (expr.read[n][l] > 0.) {
+<<<<<<< HEAD
 				/* to simplify things, reading expression levels */
 				gsl_matrix_set(level, n, l, (double)expr.read[n][l]);
+=======
+				gsl_matrix_set(level, n, l, (double)(roundf((log2(expr.read[n][l]) - l2min) * scafa) + 1.));
+>>>>>>> 489e4697ed1840211110387031fde492b9ee9031
 				expr.maxLevel = max((int)gsl_matrix_get(level, n, l), expr.maxLevel);
 			} else {
 				gsl_matrix_set(level, n, l, (double)1.);

@@ -12,6 +12,7 @@ Read the COPYING file for license information.
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "config.h"
 #include "safe.h"
 #include "seq.h"
 
