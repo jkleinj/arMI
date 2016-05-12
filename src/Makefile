@@ -168,7 +168,7 @@ AUTOMAKE = ${SHELL} /home2/jkleinj/arMI/arMI/missing automake-1.14
 AWK = mawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -ggdb -O0
+CFLAGS = -g -O2
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo

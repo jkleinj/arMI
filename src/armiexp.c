@@ -99,11 +99,11 @@ __inline__ static void armi(gsl_matrix *MI_mat_, unsigned int N,
 	}
 
 	/* precompute exponentials of p(x) and p(y), expressed here as p(z) */
-	rMI_3_3_34_mat = alloc_mat3D_longdouble(rMI_3_3_34_mat, (int)L, (int)E, (int)N);
-	init_mat3D_longdouble(rMI_3_3_34_mat, (int)L, (int)E, (int)N, 0.);
+	rMI_3_3_34_mat = alloc_mat3D_longdouble(rMI_3_3_34_mat, (int)L, (int)(E+1), (int)N);
+	init_mat3D_longdouble(rMI_3_3_34_mat, (int)L, (int)(E+1), (int)N, 0.);
 
 	for (z = 0; z < L; ++ z) {
-		for (e = 1; e < E; ++ e) {
+		for (e = 1; e <= E; ++ e) {
 			for (n = 1; n < N; ++ n) {
 				p_z = (long double)gsl_matrix_get(p_E_, e, z);
 				if (p_z > 0) {
@@ -136,9 +136,9 @@ __inline__ static void armi(gsl_matrix *MI_mat_, unsigned int N,
 			/* 2. double sum over xeS yeS */
 			/* for all elements x: ex */
 			rMI_23 = 0.;
-			for (ex = 1; ex < E; ++ ex) {
+			for (ex = 1; ex <= E; ++ ex) {
 				/* for all elements y: ey */
-				for (ey = 1; ey < E; ++ ey) {
+				for (ey = 1; ey <= E; ++ ey) {
 					/* get probabilities p_x,p_y of all elements in columns x,y */
 					p_x = (long double)gsl_matrix_get(p_E_, ex, x);
 					p_y = (long double)gsl_matrix_get(p_E_, ey, y);
@@ -185,7 +185,7 @@ __inline__ static void armi(gsl_matrix *MI_mat_, unsigned int N,
 		}
 	}
 	free(log1n);
-	free_mat3D_longdouble(rMI_3_3_34_mat, L, E);
+	free_mat3D_longdouble(rMI_3_3_34_mat, L, E+1);
 }
 
 /*____________________________________________________________________________*/
@@ -199,7 +199,7 @@ __inline__ static void columnpair_mutual_information(gsl_matrix *level_, unsigne
 	double MIxy = 0.;
 	unsigned int nMI = 0;
 	double p_e_x, p_e_y, p_ee_xy;
-	gsl_matrix *p_EE = gsl_matrix_calloc(E, E);
+	gsl_matrix *p_EE = gsl_matrix_calloc(E + 1, E + 1);
 	double w_ee;
 	double dN = (double)N;
 
@@ -219,16 +219,18 @@ __inline__ static void columnpair_mutual_information(gsl_matrix *level_, unsigne
 				e_x = (int)gsl_matrix_get(level_, n, x);
 				e_y = (int)gsl_matrix_get(level_, n, y);
 
-				assert((e_x < E) && (e_y < E));
+				assert((e_x > 0) && (e_x <= E));
+				assert((e_y > 0) && (e_y <= E));
 
 				/* compute element pair probabilities */
 				gsl_matrix_set(p_EE, e_x, e_y, gsl_matrix_get(p_EE, e_x, e_y) + w_ee);
 			}
+
 			/* reset for each column pair */
 			MIxy = 0.;
 			/* compute MIxy for column pair x,y */
-			for (e_x = 1; e_x < E; ++ e_x) {
-				for (e_y = 1; e_y < E; ++ e_y) {
+			for (e_x = 1; e_x <= E; ++ e_x) {
+				for (e_y = 1; e_y <= E; ++ e_y) {
 					p_ee_xy = gsl_matrix_get(p_EE, e_x, e_y);
 					p_e_x = gsl_matrix_get(p_E_, e_x, x);
 					p_e_y = gsl_matrix_get(p_E_, e_y, y);
@@ -320,6 +322,9 @@ int main(int argc, char *argv[])
 	long double completion = 0.;
 	unsigned int completion_i = 0;
 
+	/* probability check */
+	double p_sum = 0.;
+
 	/*____________________________________________________________________________*/
 	/* random seed */
 	srand(time(NULL));
@@ -368,8 +373,6 @@ int main(int argc, char *argv[])
     /*____________________________________________________________________________*/
 	/* determine min/max expression values and number of expression levels */
 	/* create expression level matrix */
-	/* we shift the levels by +1 to keep the routines identical to those for
-		sequences, where '0' indicates a gap (which is ignored) */
 	gsl_matrix *level = gsl_matrix_calloc(N, L); /* expression level matrix */
 
 	expr.maxLevel = 1;
@@ -377,7 +380,8 @@ int main(int argc, char *argv[])
 		for (l = 0; l < expr.ncol; ++ l) {
 			assert((expr.read[n][l] >= 0.) && "expression values should be positive");
 			if (expr.read[n][l] > 0.) {
-				gsl_matrix_set(level, n, l, (double)roundf(log2(expr.read[n][l]) + 1.));
+				/* to simplify things, reading expression levels */
+				gsl_matrix_set(level, n, l, (double)expr.read[n][l]);
 				expr.maxLevel = max((int)gsl_matrix_get(level, n, l), expr.maxLevel);
 			} else {
 				gsl_matrix_set(level, n, l, (double)1.);
@@ -386,9 +390,15 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	E = expr.maxLevel + 1; /* number of expression levels (in bits) */
-	fprintf(stdout, "\tmax: %d\n\texpression levels: %d bit\n",
+	E = (unsigned int)expr.maxLevel; /* number of expression levels */
+	fprintf(stdout, "\tmax: %d\n\texpression levels: %d\n",
 			expr.maxLevel, E);
+
+#ifdef DEBUG
+	FILE *f = fopen ("level.mat", "w");
+	gsl_matrix_fprintf(f, level, "%f");
+	fclose(f);
+#endif
 
 	/*____________________________________________________________________________*/
 	/* compute column-wise element probability matrix p_E */
@@ -414,6 +424,18 @@ int main(int argc, char *argv[])
 				gsl_matrix_set(p_E, e, l, (gsl_matrix_get(p_E, e, l) + (1 / (double)N)));
 			}
 		}
+	}
+
+	/* assert total probability = 1 */
+	for (l = 0; l < L; ++ l) {
+		p_sum = 0.;
+		for (e = 1; e <= E; ++ e) {
+			p_sum += gsl_matrix_get(p_E, e, l);
+		}
+#ifdef DEBUG
+		fprintf(stderr, "p_sum[%d] = %lf\n", l, p_sum);
+#endif
+		assert(((p_sum > 1 - 1e-6) && (p_sum < 1 + 1e-6)));
 	}
 
 	/*____________________________________________________________________________*/
@@ -460,7 +482,7 @@ int main(int argc, char *argv[])
 	/* randomised expression level matrix */
 	gsl_matrix *level_rand = gsl_matrix_calloc(N, L);
 	/* probabilities of elements */
-	gsl_matrix *p_E_rand = gsl_matrix_calloc(E, L);
+	gsl_matrix *p_E_rand = gsl_matrix_calloc(E + 1, L);
 	/* nrMI values of repeated randomisation */
 	gsl_vector *nrMIvec = gsl_vector_calloc(nPairs);
 	/* nrMI mean values of repeated randomisation */
