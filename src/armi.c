@@ -236,7 +236,8 @@ __inline__ static void columnpair_mutual_information(gsl_matrix *mali_, unsigned
 					}
 				}
 			}
-			fprintf (outFile_, "%d\t%d\t%lf\n", x+1, y+1, MIxy);
+			fprintf(stderr, "%d\t%d\t%lf\n", x+1, y+1, MIxy);
+			fprintf(outFile_, "%d\t%d\t%lf\n", x+1, y+1, MIxy);
 			gsl_vector_set(MIvec_, nMI, MIxy);
 			++ nMI;
 		}
@@ -284,10 +285,10 @@ __inline__ static double randomise_matrix(gsl_matrix *mali_rand, gsl_matrix *mal
 int main(int argc, char *argv[])
 {
 	int e;
-	unsigned int i, l, n, x, y, zz;
+	unsigned int i, l, n, zz;
 	char outFileName_arMI[128];
 	char outFileName_MI[128];
-	char outFileName_nrMI[128];
+	char outFileName_nrMIit[128];
 	char outFileName_rmsd[128];
 	char outFileName_time[128];
 	char outFileName_seq[128];
@@ -295,7 +296,7 @@ int main(int argc, char *argv[])
 	FILE *outFile_arMI = 0;
 	FILE *outFile_MI = 0;
 	FILE *outFile_nrMIit = 0;
-	FILE *outFile_nrMI = 0;
+	/*FILE *outFile_nrMI = 0;*/
 	FILE *outFile_rmsd = 0;
 	FILE *outFile_time = 0;
 	FILE *outFile_seq = 0;
@@ -309,9 +310,9 @@ int main(int argc, char *argv[])
 
 	unsigned int allocated = 64;
 
-	char nrMIit[64];
+	/*char nrMIit[64];*/
 	const unsigned int nIter = 100;
-	unsigned int nMI = 0;
+	/*unsigned int nMI = 0;*/
 	double rmsd = 0.;
 
 	clock_t begin, end;
@@ -320,8 +321,8 @@ int main(int argc, char *argv[])
 	double time_spent_nrMI;
 
 	/* loop completion */
-	long double completion = 0.;
-	unsigned int completion_i = 0;
+	/*long double completion = 0.;*/
+	/*unsigned int completion_i = 0;*/
 
 	/*____________________________________________________________________________*/
 	/* random seed */
@@ -478,8 +479,7 @@ int main(int argc, char *argv[])
 	gsl_vector *nrMIvec = gsl_vector_calloc(nPairs);
 	/* nrMI mean values of repeated randomisation */
 	gsl_vector *nrMImeanVec = gsl_vector_calloc(nPairs);
-	/* copy of the previous */
-	gsl_vector *nrMImeanVecCp = gsl_vector_calloc(nPairs);
+	/* copy of the previous */gsl_vector *nrMImeanVecCp = gsl_vector_calloc(nPairs);
 	/* nrMI var values of repeated randomisation */
 	gsl_vector *nrMIvarVec = gsl_vector_calloc(nPairs);
 
@@ -501,7 +501,7 @@ int main(int argc, char *argv[])
 		//}
 
 		//sprintf(nrMIit, "%s%s%d%s", arg.prefix, "nrMI_data/nrMI.", i, ".dat");
-		//outFile_nrMIit = fopen(nrMIit, "w");
+
 		//fprintf(outFile_nrMIit, "col1\tcol2\tnrMI\n");
 
 		if (i == 0) {
@@ -526,6 +526,8 @@ int main(int argc, char *argv[])
 			}
 		}
 
+		sprintf(outFileName_nrMIit, "%s%s", arg.prefix, "nrMIit.dat");
+		outFile_nrMIit = fopen(outFileName_nrMIit, "w");
 		columnpair_mutual_information(mali_rand, N, L, p_E_rand, E, Ngap, outFile_nrMIit, nrMIvec);
 		/* sum(MI) of each column pair over iterations */
 		//gsl_vector_add(nrMImeanVec, nrMIvec);
@@ -533,7 +535,7 @@ int main(int argc, char *argv[])
 		//gsl_vector_mul(nrMIvec, nrMIvec);
 		//gsl_vector_add(nrMIvarVec, nrMIvec);
 
-		//fclose(outFile_nrMIit);
+		fclose(outFile_nrMIit);
 	}
 
 	/* normalise to mean values */
@@ -560,7 +562,6 @@ int main(int argc, char *argv[])
 	end = clock();
 	time_spent_nrMI = (double)(end - begin) / CLOCKS_PER_SEC;
 	if (! arg.silent) fprintf(stdout, "\n\tt(nrMI): %lf s\n", time_spent_nrMI);
-	fclose(outFile_nrMI);
 
 	/*____________________________________________________________________________*/
 	/* write times spent */

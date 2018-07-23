@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT(armi, 1.1.0, Jens.Kleinjung@crick.ac.uk)
+AC_INIT(armi, 1.2.0, Jens.Kleinjung@crick.ac.uk)
 AC_CONFIG_SRCDIR([src/armi.c])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 

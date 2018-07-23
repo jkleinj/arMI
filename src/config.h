@@ -2,7 +2,7 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to compile with DEBUG settings. */
-/* #undef DEBUG */
+#define DEBUG 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -88,7 +88,7 @@
 #define PACKAGE_VERSION "1.1.0"
 
 /* Define to compile with PROFILING settings. */
-#define PROFILING 1
+/* #undef PROFILING */
 
 /* Define to compile with SPEED settings. */
 /* #undef SPEED */
