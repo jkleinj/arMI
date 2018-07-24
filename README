@@ -18,6 +18,13 @@ or synonymously symbols [@,Z], where '@' is the program-internal gap symbol.
 The number of sequences must be in the range [2,1755],
 deeper alignments will lead to an assertion exception.
 
+Reference
+---------
+```
+Jens Kleinjung, Anthony C.C. Coolen
+A simple analytical formula to compute the residual Mutual Information between pairs of data vectors.
+http://dx.doi.org/10.1101/041988
+```
 
 Install / Uninstall
 -------------------
